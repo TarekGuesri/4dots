@@ -1,0 +1,30 @@
+{
+	"$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/packages/cspell-types/cspell.schema.json",
+	"ignoreWords": ["Tarek", "Guesri", "browserslist"],
+	"ignorePaths": [
+		"node_modules",
+		"dist",
+		"build",
+		".husky",
+		"coverage",
+		"thunder-tests",
+		"./.gitignore",
+		"./.prettierrc.json",
+		"packages/client/public/vite.svg",
+		"packages/server/README.md"
+	],
+	"words": [
+		"appbar",
+		"EBADCSRFTOKEN",
+		"hookform",
+		"middlewares",
+		"virtuals",
+		"endregion",
+		"nestjs",
+		"commitlint",
+		"signin",
+		"mockdata",
+		"svgr",
+		"prebuild"
+	]
+}

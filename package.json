@@ -1,0 +1,29 @@
+{
+	"name": "vite-react-nestjs-template",
+	"version": "1.0.0",
+	"private": "true",
+	"workspaces": [
+		"packages/*"
+	],
+	"repository": "https://github.com/TarekGuesri/vite-react-nestjs-template.git",
+	"author": "TarekGuesri <tguesri@gmail.com>",
+	"license": "MIT",
+	"scripts": {
+		"client": "yarn workspace @vite-react-nestjs-template/client",
+		"server": "yarn workspace @vite-react-nestjs-template/server",
+		"start:dev": "concurrently \"yarn server start:dev\" \"yarn client start:dev\" -i --names \"server,client\"",
+		"format": "prettier --write .",
+		"lint": "concurrently \"yarn server lint\" \"yarn client lint\"",
+		"postinstall": "yarn husky install"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^17.6.5",
+		"@commitlint/config-conventional": "^17.6.5",
+		"concurrently": "^8.2.0",
+		"cspell": "^5.12.6",
+		"husky": "^8.0.3",
+		"lerna": "^7.0.0",
+		"lint-staged": "^15.2.1",
+		"prettier": "^2.8.8"
+	}
+}
