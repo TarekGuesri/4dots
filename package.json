@@ -1,16 +1,16 @@
 {
-	"name": "vite-react-nestjs-template",
+	"name": "4dots",
 	"version": "1.0.0",
 	"private": "true",
 	"workspaces": [
 		"packages/*"
 	],
-	"repository": "https://github.com/TarekGuesri/vite-react-nestjs-template.git",
+	"repository": "https://github.com/TarekGuesri/4dots.git",
 	"author": "TarekGuesri <tguesri@gmail.com>",
 	"license": "MIT",
 	"scripts": {
-		"client": "yarn workspace @vite-react-nestjs-template/client",
-		"server": "yarn workspace @vite-react-nestjs-template/server",
+		"client": "yarn workspace @4dots/client",
+		"server": "yarn workspace @4dots/server",
 		"start:dev": "concurrently \"yarn server start:dev\" \"yarn client start:dev\" -i --names \"server,client\"",
 		"format": "prettier --write .",
 		"lint": "concurrently \"yarn server lint\" \"yarn client lint\"",

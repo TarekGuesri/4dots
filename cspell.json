@@ -25,6 +25,7 @@
 		"signin",
 		"mockdata",
 		"svgr",
-		"prebuild"
+		"prebuild",
+		"tailwindcss"
 	]
 }
