@@ -1,50 +1,41 @@
 import { useRecoilState } from 'recoil';
 import { BOARD_SIZE } from '@constants/BoardSettings';
 import { DiskPlace } from '@molecules/DiskPlace';
-import { DiskAtom, CurrentPlayerAtom, WinnerAtom } from '@state/board';
-import { CurrentPlayer } from '@state/types';
+import { BoardDisksAtom, CurrentPlayerAtom, WinnerAtom } from '@state/board';
+import type { BoardDisksType } from '@state/types';
+import { CurrentPlayerType } from '@state/types';
+import { checkWinner } from '@utils/helpers';
 
 interface BoardColProps {
 	colId: number;
 }
 
-const rows = Array(BOARD_SIZE.rows).fill(null);
-
-const numRows = 6;
-// const numCols = 7;
-
 export function BoardCol(props: BoardColProps) {
 	const { colId } = props;
-
-	const [board, setBoard] = useRecoilState(DiskAtom);
+	const [boardDisks, setBoardDisks] = useRecoilState(BoardDisksAtom);
 	const [currentPlayer, setCurrentPlayer] = useRecoilState(CurrentPlayerAtom);
 	const [winner, setWinner] = useRecoilState(WinnerAtom);
 
-	const checkWinner = (row: number, col: number) => {
-		console.log({ row, col });
-		return false;
-	};
-
 	const handleClickCol = () => {
-		if (winner || board[0][colId]) return;
+		if (winner || boardDisks[0][colId]) return;
 
-		const newBoard = board.map((row) => [...row]);
+		const newBoard: BoardDisksType = boardDisks.map((row) => [...row]);
 
-		for (let i = numRows - 1; i >= 0; i--) {
+		for (let i = BOARD_SIZE.rows - 1; i >= 0; i--) {
 			if (!newBoard[i][colId]) {
 				newBoard[i][colId] = currentPlayer;
 
-				if (checkWinner(i, colId)) {
+				if (checkWinner(i, colId, currentPlayer, newBoard)) {
 					setWinner(currentPlayer);
 				} else {
 					setCurrentPlayer(
-						currentPlayer === CurrentPlayer.Player1
-							? CurrentPlayer.Player2
-							: CurrentPlayer.Player1
+						currentPlayer === CurrentPlayerType.Player1
+							? CurrentPlayerType.Player2
+							: CurrentPlayerType.Player1
 					);
 				}
 
-				setBoard(newBoard);
+				setBoardDisks(newBoard);
 				break;
 			}
 		}
@@ -59,7 +50,7 @@ export function BoardCol(props: BoardColProps) {
 			className='flex-1 flex flex-col hover:bg-sky-600 cursor-pointer'
 			onClick={handleClickCol}
 		>
-			{rows.map((_, index) => (
+			{boardDisks.map((_, index) => (
 				<DiskPlace key={index} colId={colId} rowId={index} />
 			))}
 		</div>
