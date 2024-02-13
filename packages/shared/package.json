@@ -1,0 +1,11 @@
+{
+	"name": "@4dots/shared",
+	"version": "1.0.0",
+	"private": false,
+	"main": "src/index.js",
+	"main:src": "src/index.ts",
+	"license": "MIT",
+	"devDependencies": {
+		"typescript": "4.7.4"
+	}
+}

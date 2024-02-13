@@ -9,9 +9,9 @@ export function Board() {
 	const winner = useRecoilValue(WinnerAtom);
 
 	return (
-		<div>
-			<div className='bg-red-500 w-[950px] h-[750px] flex justify-center items-center flex-col'>
-				<div className='bg-sky-500 w-[450px] h-[450px] flex flex-row flex-nowrap'>
+		<div className='h-screen'>
+			<div className='bg-red-500 w-[950px] h-full flex justify-center items-center flex-col'>
+				<div className='bg-sky-500 w-[490px] h-[420px] flex flex-row flex-nowrap'>
 					{boardDisks[0].map((_, index) => (
 						<BoardCol key={index} colId={index} />
 					))}
