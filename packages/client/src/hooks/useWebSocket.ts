@@ -1,4 +1,4 @@
-import { SocketEventType } from '@4dots/shared';
+import type { SocketEventType } from '@4dots/shared';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { socket } from '@src/socket';
@@ -25,7 +25,7 @@ export function useWebsocket() {
 			const user = { id: socketUserId };
 
 			socket.emit('events', { test: 'test' });
-			socket.emit(SocketEventType.IDENTIFY, user, (response: unknown) =>
+			socket.emit<SocketEventType>('identity', user, (response: unknown) =>
 				console.log('Identity:', response)
 			);
 			socket.emit('events', user, (response: unknown) =>
@@ -38,12 +38,12 @@ export function useWebsocket() {
 			console.log('onDisconnect');
 		}
 
-		socket.on(SocketEventType.CONNECT, onConnect);
-		socket.on(SocketEventType.DISCONNECT, onDisconnect);
+		socket.on<SocketEventType>('connect', onConnect);
+		socket.on<SocketEventType>('disconnect', onDisconnect);
 
 		return () => {
-			socket.off('connect', onConnect);
-			socket.off(SocketEventType.DISCONNECT, onDisconnect);
+			socket.off<SocketEventType>('connect', onConnect);
+			socket.off<SocketEventType>('disconnect', onDisconnect);
 		};
 	}, []);
 

@@ -1,4 +1,5 @@
-import { IRoomInfo, SocketEventType } from '@4dots/shared';
+import { IRoomInfo } from '@4dots/shared';
+import type { SocketEventType } from '@4dots/shared';
 import type { WsResponse } from '@nestjs/websockets';
 import {
   MessageBody,
@@ -35,13 +36,13 @@ export class EventsGateway {
     return data;
   }
 
-  @SubscribeMessage(SocketEventType.JOINED_ROOM)
+  @SubscribeMessage<SocketEventType>('joinedRoom')
   async joinedRoom(@MessageBody() data: IRoomInfo): Promise<number> {
     console.log('joinedRoom');
 
     console.log({ data });
 
-    this.server.emit(SocketEventType.JOINED_ROOM, data);
+    this.server.emit<SocketEventType>('joinedRoom', data);
     return 0;
   }
 
