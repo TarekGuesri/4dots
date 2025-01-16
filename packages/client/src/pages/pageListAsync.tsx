@@ -6,6 +6,9 @@ import { Loading } from '@atoms/Loading/Loading';
 const Home = lazy(() =>
 	import('./Home').then((module) => ({ default: module.Home }))
 );
+const Room = lazy(() =>
+	import('./Room').then((module) => ({ default: module.Room }))
+);
 const NotFound = lazy(() =>
 	import('./NotFound').then((module) => ({ default: module.NotFound }))
 );
@@ -14,6 +17,11 @@ const NotFound = lazy(() =>
 export const HomePage: FC = () => (
 	<Suspense fallback={<Loading />}>
 		<Home />
+	</Suspense>
+);
+export const RoomPage: FC = () => (
+	<Suspense fallback={<Loading />}>
+		<Room />
 	</Suspense>
 );
 export const NotFoundPage: FC = () => (

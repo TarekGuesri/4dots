@@ -28,6 +28,7 @@
 		"prebuild",
 		"tailwindcss",
 		"uuidv",
+		"Socket",
 		"websockets"
 	]
 }

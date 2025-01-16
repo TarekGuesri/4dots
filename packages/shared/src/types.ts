@@ -1,6 +1,15 @@
 export type SocketEventType =
+	| 'createRoom'
+	| 'roomCreated'
+	| 'joinRoom'
+	| 'roomJoined'
+	| 'createRoomError'
+	| 'joinRoomError'
+	| 'leaveRoom'
+	| 'leaveRoomError'
+	| 'roomLeft'
+	| 'roomDeleted'
+	| 'roomUpdated'
 	| 'connect'
 	| 'disconnect'
-	| 'identity'
-	| 'joinedRoom'
-	| 'leftRoom';
+	| 'error';

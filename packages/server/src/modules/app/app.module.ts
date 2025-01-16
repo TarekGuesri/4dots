@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import config from '../../config';
 import { AppController } from './app.controller';
-import { EventsModule } from '../events/events.module';
+import { EventModule } from '../event/event.module';
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import { EventsModule } from '../events/events.module';
       load: [config],
       cache: true,
     }),
-    EventsModule,
+    EventModule,
   ],
   controllers: [AppController],
 })
