@@ -32,7 +32,6 @@ server/.nyc_output
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
 server/.vscode/*
 

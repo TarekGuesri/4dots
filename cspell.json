@@ -26,6 +26,9 @@
 		"mockdata",
 		"svgr",
 		"prebuild",
-		"tailwindcss"
+		"tailwindcss",
+		"uuidv",
+		"Socket",
+		"websockets"
 	]
 }

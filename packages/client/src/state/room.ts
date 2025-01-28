@@ -1,4 +1,5 @@
 import { atom, useResetRecoilState } from 'recoil';
+import type { IRoomInfo } from '@4dots/shared';
 import type { BoardDisksType } from './types';
 import { CurrentPlayerType } from './types';
 import { StateKeys } from '@constants/StateKeys';
@@ -10,21 +11,31 @@ const createEmptyBoard = () =>
 	);
 
 export const BoardDisksAtom = atom<BoardDisksType>({
-	key: StateKeys.BoardDisks,
+	key: StateKeys.RoomBoardDisks,
 	default: createEmptyBoard(),
 });
 
 export const CurrentPlayerAtom = atom<CurrentPlayerType>({
-	key: StateKeys.BoardCurrentPlayer,
+	key: StateKeys.RoomBoardCurrentPlayer,
 	default: CurrentPlayerType.Player1,
 });
 
 export const WinnerAtom = atom<CurrentPlayerType | null>({
-	key: StateKeys.BoardWinner,
+	key: StateKeys.RoomBoardWinner,
 	default: null,
 });
 
-export function useResetPickerState() {
+export const RoomInfoAtom = atom<IRoomInfo | null>({
+	key: StateKeys.RoomInfo,
+	default: null,
+});
+
+export const RoomInfoLoadingAtom = atom<boolean>({
+	key: StateKeys.RoomInfoLoading,
+	default: true,
+});
+
+export function useResetBoardState() {
 	const resetDisks = useResetRecoilState(BoardDisksAtom);
 	const resetCurrentPlayer = useResetRecoilState(CurrentPlayerAtom);
 	const resetWinner = useResetRecoilState(WinnerAtom);
@@ -33,5 +44,15 @@ export function useResetPickerState() {
 		resetDisks();
 		resetCurrentPlayer();
 		resetWinner();
+	};
+}
+
+export function useResetRoomState() {
+	const reestRoomInfo = useResetRecoilState(RoomInfoAtom);
+	const reestRoomInfoLoading = useResetRecoilState(RoomInfoLoadingAtom);
+
+	return () => {
+		reestRoomInfo();
+		reestRoomInfoLoading();
 	};
 }
