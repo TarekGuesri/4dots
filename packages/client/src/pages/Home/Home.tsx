@@ -1,15 +1,17 @@
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useEffect, useState } from 'react';
 import { RoomInfoAtom } from '@state/room';
-import { useWebsocket } from '@hooks/useWebSocket';
+import { useWebSocket } from '@hooks/useWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
+import { ModalTypeAtom } from '@state/ui';
 
 export function Home() {
 	const [IsLoading, setIsLoading] = useState(false);
-	const { createRoom } = useWebsocket();
+	const { createRoom } = useWebSocket();
 	const roomInfo = useRecoilValue(RoomInfoAtom);
 	const socketUserId = useRecoilValue(SocketUserIdAtom);
+	const setModalType = useSetRecoilState(ModalTypeAtom);
 	const navigate = useNavigate();
 
 	const handleCreateRoom = () => {
@@ -18,16 +20,12 @@ export function Home() {
 	};
 
 	useEffect(() => {
+		setModalType(null);
+
 		if (roomInfo && roomInfo.hostId === socketUserId) {
-			console.log('aaaaaaaaaaa');
-
-			console.log({ roomInfo });
-
 			navigate(`/room/${roomInfo.id}`);
 		}
 	}, [roomInfo]);
-
-	console.log('App Render');
 
 	return (
 		<div>

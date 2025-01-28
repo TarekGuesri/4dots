@@ -1,5 +1,5 @@
 import { useRecoilValue } from 'recoil';
-import { BoardDisksAtom } from '@state/board';
+import { BoardDisksAtom } from '@state/room';
 import { CurrentPlayerType } from '@state/types';
 
 interface DiskProps {

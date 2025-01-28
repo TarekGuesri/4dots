@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
+import { BoardDisksAtom, CurrentPlayerAtom, WinnerAtom } from '@state/room';
 import { BoardCol } from '@organisms/BoardCol';
-import { BoardDisksAtom, CurrentPlayerAtom, WinnerAtom } from '@state/board';
 import { CurrentPlayerType } from '@state/types';
 
 export function Board() {

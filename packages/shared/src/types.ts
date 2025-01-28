@@ -13,3 +13,8 @@ export type SocketEventType =
 	| 'connect'
 	| 'disconnect'
 	| 'error';
+
+export type EventErrorsType =
+	| 'Error.RoomNotFound'
+	| 'Error.RoomFull'
+	| 'Error.HostLeft';

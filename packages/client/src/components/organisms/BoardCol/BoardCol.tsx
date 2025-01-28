@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
+import { BoardDisksAtom, CurrentPlayerAtom, WinnerAtom } from '@state/room';
 import { BOARD_SIZE } from '@constants/BoardSettings';
 import { DiskPlace } from '@molecules/DiskPlace';
-import { BoardDisksAtom, CurrentPlayerAtom, WinnerAtom } from '@state/board';
 import type { BoardDisksType } from '@state/types';
 import { CurrentPlayerType } from '@state/types';
 import { checkWinner } from '@utils/helpers';

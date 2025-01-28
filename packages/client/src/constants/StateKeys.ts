@@ -1,4 +1,6 @@
 export enum StateKeys {
+	// UI
+	ModalType = 'ModalType',
 	// Socket
 	SocketUserId = 'Socket.UserId',
 	SocketInstance = 'Socket.Instance',
