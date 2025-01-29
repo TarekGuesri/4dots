@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { useRoomWebSocket } from './useRoomWebSocket';
+import { useGameWebSocket } from './useGameWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
 import { socket } from '@src/socket';
 
@@ -8,6 +9,7 @@ export function useWebSocket() {
 	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [socketUserId, setSocketUserId] = useRecoilState(SocketUserIdAtom);
 	const { createRoom, joinRoom, leaveRoom } = useRoomWebSocket();
+	const { startGame } = useGameWebSocket();
 
 	const onConnect = () => {
 		if (isConnected || socketUserId) {
@@ -44,5 +46,5 @@ export function useWebSocket() {
 		};
 	}, [isConnected, socketUserId]);
 
-	return { createRoom, joinRoom, leaveRoom, isConnected };
+	return { createRoom, joinRoom, leaveRoom, startGame, isConnected };
 }

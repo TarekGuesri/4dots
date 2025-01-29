@@ -7,22 +7,22 @@ import { Injectable } from '@nestjs/common';
 import type {
   ClearUserFromRoomDTO,
   CreateRoomDTO,
-  JoinLeaveRoomDTO,
+  JoinLeaveStartRoomDTO,
 } from './event.dto';
 
 @Injectable()
 export class EventService {
   private rooms: Array<IRoomInfo> = [];
 
-  async createRoom({ room, server, socket }: CreateRoomDTO) {
+  createRoom({ room, server, socket }: CreateRoomDTO) {
     // Leave any existing room the user is in
     this.clearUserFromRoom({ server, socket });
 
     this.rooms.push(room);
-    server.emit<SocketEventType>('createRoom', room);
+    socket.emit<SocketEventType>('createRoom', room);
   }
 
-  async joinRoom({ roomId, server, socket }: JoinLeaveRoomDTO) {
+  joinRoom({ roomId, server, socket }: JoinLeaveStartRoomDTO) {
     // Leave any existing room the user is in
     this.clearUserFromRoom({ server, socket });
 
@@ -52,10 +52,12 @@ export class EventService {
       room.visitorId = socket.id;
     }
 
-    server.emit<SocketEventType>('roomUpdated', room);
+    server
+      .to([room.hostId, room.visitorId])
+      .emit<SocketEventType>('roomUpdated', room);
   }
 
-  async leaveRoom({ roomId, server, socket }: JoinLeaveRoomDTO) {
+  leaveRoom({ roomId, server, socket }: JoinLeaveStartRoomDTO) {
     const room = this.rooms.find((room) => room.id === roomId);
 
     if (!room) {
@@ -64,22 +66,43 @@ export class EventService {
 
     // If host leaves, delete the room and notify the visitor
     if (room.hostId === socket.id) {
-      server.emit<SocketEventType>('roomDeleted', room);
+      server
+        .to([room.hostId, room.visitorId])
+        .emit<SocketEventType>('roomDeleted', room);
       this.rooms = this.rooms.filter((_room) => _room.id !== room.id);
     } else if (room.visitorId === socket.id) {
       room.visitorId = null;
-      server.emit<SocketEventType>('roomUpdated', room);
+      server
+        .to([room.hostId, room.visitorId])
+        .emit<SocketEventType>('roomUpdated', room);
     }
 
     socket.emit<SocketEventType>('roomLeft');
   }
 
-  async clearUserFromRoom({ socket, server }: ClearUserFromRoomDTO) {
+  clearUserFromRoom({ socket, server }: ClearUserFromRoomDTO) {
     const room = this.rooms.find(
       (room) => room.hostId === socket.id || room.visitorId === socket.id,
     );
     if (room) {
       this.leaveRoom({ roomId: room.id, socket, server });
     }
+  }
+
+  startGame({ roomId, server, socket }: JoinLeaveStartRoomDTO) {
+    const room = this.rooms.find((room) => room.id === roomId);
+
+    if (!room) {
+      socket.emit<SocketEventType>('error', {
+        type: 'Error.RoomNotFound',
+      } as SocketEventErrorPayload);
+      return;
+    }
+
+    console.log('startGame');
+
+    console.log({ room });
+
+    server.to(room.visitorId).emit<SocketEventType>('startGame', room);
   }
 }

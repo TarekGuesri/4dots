@@ -11,7 +11,7 @@ export function useRoomWebSocket() {
 	const [roomInfo, setRoomInfo] = useRecoilState(RoomInfoAtom);
 	const [socketUserId] = useRecoilState(SocketUserIdAtom);
 	const setIsRoomInfoLoading = useSetRecoilState(RoomInfoLoadingAtom);
-	const setModalTypeAtom = useSetRecoilState(ModalTypeAtom);
+	const setModalType = useSetRecoilState(ModalTypeAtom);
 
 	const createRoom = (): IRoomInfo | null => {
 		if (!socketUserId) {
@@ -65,12 +65,12 @@ export function useRoomWebSocket() {
 		}
 		setRoomInfo(null);
 		if (room.hostId !== socketUserId) {
-			setModalTypeAtom('Error.HostLeft');
+			setModalType('Error.HostLeft');
 		}
 	};
 
 	const handleError = (error: { type: EventErrorsType }) => {
-		setModalTypeAtom(error.type);
+		setModalType(error.type);
 		setIsRoomInfoLoading(false);
 	};
 

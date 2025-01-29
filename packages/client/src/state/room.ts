@@ -15,6 +15,11 @@ export const BoardDisksAtom = atom<BoardDisksType>({
 	default: createEmptyBoard(),
 });
 
+export const HasGameStartedAtom = atom<boolean>({
+	key: StateKeys.RoomHasGameStarted,
+	default: false,
+});
+
 export const CurrentPlayerAtom = atom<CurrentPlayerType>({
 	key: StateKeys.RoomBoardCurrentPlayer,
 	default: CurrentPlayerType.Player1,

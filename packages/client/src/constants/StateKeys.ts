@@ -8,6 +8,7 @@ export enum StateKeys {
 	RoomInfo = 'Room.Info',
 	RoomInfoLoading = 'Room.InfoLoading',
 	RoomBoardDisks = 'Room.BoardDisks',
+	RoomHasGameStarted = 'Room.HasGameStarted',
 	RoomBoardCurrentPlayer = 'Room.BoardCurrentPlayer',
 	RoomBoardWinner = 'Room.BoardWinner',
 }

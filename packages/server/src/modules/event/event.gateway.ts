@@ -53,6 +53,14 @@ export class EventGateway {
     this.eventService.leaveRoom({ roomId, socket, server: this.server });
   }
 
+  @SubscribeMessage<SocketEventType>('startGame')
+  async startGame(
+    @MessageBody() roomId: string,
+    @ConnectedSocket() socket: Socket,
+  ): Promise<void> {
+    this.eventService.startGame({ roomId, socket, server: this.server });
+  }
+
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     console.log('disconnected');
     console.log({ socketId: socket.id });

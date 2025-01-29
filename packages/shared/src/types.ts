@@ -1,4 +1,9 @@
 export type SocketEventType =
+	// Socket
+	| 'connect'
+	| 'disconnect'
+	| 'error'
+	// Room
 	| 'createRoom'
 	| 'roomCreated'
 	| 'joinRoom'
@@ -10,9 +15,8 @@ export type SocketEventType =
 	| 'roomLeft'
 	| 'roomDeleted'
 	| 'roomUpdated'
-	| 'connect'
-	| 'disconnect'
-	| 'error';
+	// Board
+	| 'startGame';
 
 export type EventErrorsType =
 	| 'Error.RoomNotFound'

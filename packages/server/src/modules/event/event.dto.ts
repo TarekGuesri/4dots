@@ -6,7 +6,7 @@ export class CreateRoomDTO {
   room: IRoomInfo;
   socket: Socket;
 }
-export class JoinLeaveRoomDTO {
+export class JoinLeaveStartRoomDTO {
   server: Server;
   roomId: string;
   socket: Socket;

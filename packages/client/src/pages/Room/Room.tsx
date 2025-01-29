@@ -3,12 +3,14 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWebSocket } from '@hooks/useWebSocket';
 import {
+	HasGameStartedAtom,
 	RoomInfoAtom,
 	RoomInfoLoadingAtom,
 	useResetRoomState,
 } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
 import { ModalTypeAtom } from '@state/ui';
+import { Board } from '@templates/Board';
 
 export function Room() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,9 +20,10 @@ export function Room() {
 	const socketUserId = useRecoilValue(SocketUserIdAtom);
 	const [isRoomInfoLoading, setIsRoomInfoLoading] =
 		useRecoilState(RoomInfoLoadingAtom);
+	const hasGameStarted = useRecoilValue(HasGameStartedAtom);
 	const [modalType, setModalType] = useRecoilState(ModalTypeAtom);
 	const resetRoomState = useResetRoomState();
-	const { joinRoom, leaveRoom } = useWebSocket();
+	const { joinRoom, leaveRoom, startGame } = useWebSocket();
 	const isLeaving = useRef(false);
 	const params = useParams();
 	const navigate = useNavigate();
@@ -122,12 +125,22 @@ export function Room() {
 					>
 						Leave Room
 					</button>
+					<button
+						onClick={() => startGame(roomInfo.id)}
+						disabled={!roomInfo.visitorId}
+						className={`bg-blue-500 text-white px-4 py-2 rounded ${
+							roomInfo.visitorId ? 'hover:bg-blue-600' : ''
+						} ${!roomInfo.visitorId ? 'disabled:opacity-50' : ''}`}
+					>
+						Start Game
+					</button>
 					<div className='mt-4'>
 						<div>User: {socketUserId}</div>
 						<div>Room: {roomInfo.id}</div>
 						<div>Player1: {roomInfo.hostId}</div>
 						<div>Player2: {roomInfo.visitorId ?? 'None'}</div>
 					</div>
+					{hasGameStarted && <Board />}
 				</>
 			)}
 		</div>
