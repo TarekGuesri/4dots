@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { useRoomWebSocket } from './useRoomWebSocket';
 import { useGameWebSocket } from './useGameWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
@@ -7,7 +7,7 @@ import { socket } from '@src/socket';
 
 export function useWebSocket() {
 	const [isConnected, setIsConnected] = useState(socket.connected);
-	const [socketUserId, setSocketUserId] = useRecoilState(SocketUserIdAtom);
+	const [socketUserId, setSocketUserId] = useAtom(SocketUserIdAtom);
 	const { createRoom, joinRoom, leaveRoom } = useRoomWebSocket();
 	const { startGame } = useGameWebSocket();
 

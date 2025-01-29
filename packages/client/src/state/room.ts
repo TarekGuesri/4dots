@@ -1,8 +1,7 @@
-import { atom, useResetRecoilState } from 'recoil';
 import type { IRoomInfo } from '@4dots/shared';
+import { atom, useAtom } from 'jotai';
 import type { BoardDisksType } from './types';
 import { CurrentPlayerType } from './types';
-import { StateKeys } from '@constants/StateKeys';
 import { BOARD_SIZE } from '@constants/BoardSettings';
 
 const createEmptyBoard = () =>
@@ -10,54 +9,38 @@ const createEmptyBoard = () =>
 		Array(BOARD_SIZE.columns).fill(null)
 	);
 
-export const BoardDisksAtom = atom<BoardDisksType>({
-	key: StateKeys.RoomBoardDisks,
-	default: createEmptyBoard(),
-});
+export const BoardDisksAtom = atom<BoardDisksType>(createEmptyBoard());
 
-export const HasGameStartedAtom = atom<boolean>({
-	key: StateKeys.RoomHasGameStarted,
-	default: false,
-});
+export const HasGameStartedAtom = atom<boolean>(false);
 
-export const CurrentPlayerAtom = atom<CurrentPlayerType>({
-	key: StateKeys.RoomBoardCurrentPlayer,
-	default: CurrentPlayerType.Player1,
-});
+export const CurrentPlayerAtom = atom<CurrentPlayerType>(
+	CurrentPlayerType.Player1
+);
 
-export const WinnerAtom = atom<CurrentPlayerType | null>({
-	key: StateKeys.RoomBoardWinner,
-	default: null,
-});
+export const WinnerAtom = atom<CurrentPlayerType | null>(null);
 
-export const RoomInfoAtom = atom<IRoomInfo | null>({
-	key: StateKeys.RoomInfo,
-	default: null,
-});
+export const RoomInfoAtom = atom<IRoomInfo | null>(null);
 
-export const RoomInfoLoadingAtom = atom<boolean>({
-	key: StateKeys.RoomInfoLoading,
-	default: true,
-});
+export const RoomInfoLoadingAtom = atom<boolean>();
 
 export function useResetBoardState() {
-	const resetDisks = useResetRecoilState(BoardDisksAtom);
-	const resetCurrentPlayer = useResetRecoilState(CurrentPlayerAtom);
-	const resetWinner = useResetRecoilState(WinnerAtom);
+	const [, setBoardDisks] = useAtom(BoardDisksAtom);
+	const [, setCurrentPlayer] = useAtom(CurrentPlayerAtom);
+	const [, setWinner] = useAtom(WinnerAtom);
 
 	return () => {
-		resetDisks();
-		resetCurrentPlayer();
-		resetWinner();
+		setBoardDisks(createEmptyBoard());
+		setCurrentPlayer(CurrentPlayerType.Player1);
+		setWinner(null);
 	};
 }
 
 export function useResetRoomState() {
-	const reestRoomInfo = useResetRecoilState(RoomInfoAtom);
-	const reestRoomInfoLoading = useResetRecoilState(RoomInfoLoadingAtom);
+	const [, setRoomInfo] = useAtom(RoomInfoAtom);
+	const [, setRoomInfoLoading] = useAtom(RoomInfoLoadingAtom);
 
 	return () => {
-		reestRoomInfo();
-		reestRoomInfoLoading();
+		setRoomInfo(null);
+		setRoomInfoLoading(true);
 	};
 }

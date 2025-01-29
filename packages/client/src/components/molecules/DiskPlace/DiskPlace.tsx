@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { BoardDisksAtom } from '@state/room';
 import { CurrentPlayerType } from '@state/types';
 
@@ -9,7 +9,7 @@ interface DiskProps {
 
 export function DiskPlace(props: DiskProps) {
 	const { colId, rowId } = props;
-	const boardDisks = useRecoilValue(BoardDisksAtom);
+	const boardDisks = useAtomValue(BoardDisksAtom);
 	const player = boardDisks[rowId][colId];
 
 	const getColor = () => {

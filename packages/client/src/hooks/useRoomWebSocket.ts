@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useAtom, useSetAtom } from 'jotai';
 import { v4 as uuidv4 } from 'uuid';
 import type { EventErrorsType, IRoomInfo } from '@4dots/shared';
 import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
@@ -8,10 +8,10 @@ import { socket } from '@src/socket';
 import { ModalTypeAtom } from '@state/ui';
 
 export function useRoomWebSocket() {
-	const [roomInfo, setRoomInfo] = useRecoilState(RoomInfoAtom);
-	const [socketUserId] = useRecoilState(SocketUserIdAtom);
-	const setIsRoomInfoLoading = useSetRecoilState(RoomInfoLoadingAtom);
-	const setModalType = useSetRecoilState(ModalTypeAtom);
+	const [roomInfo, setRoomInfo] = useAtom(RoomInfoAtom);
+	const [socketUserId] = useAtom(SocketUserIdAtom);
+	const setIsRoomInfoLoading = useSetAtom(RoomInfoLoadingAtom);
+	const setModalType = useSetAtom(ModalTypeAtom);
 
 	const createRoom = (): IRoomInfo | null => {
 		if (!socketUserId) {

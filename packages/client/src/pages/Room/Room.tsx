@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWebSocket } from '@hooks/useWebSocket';
 import {
@@ -16,12 +16,12 @@ export function Room() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [hasJoined, setHasJoined] = useState(false);
 	const [modalMessage, setModalMessage] = useState('');
-	const roomInfo = useRecoilValue(RoomInfoAtom);
-	const socketUserId = useRecoilValue(SocketUserIdAtom);
+	const roomInfo = useAtomValue(RoomInfoAtom);
+	const socketUserId = useAtomValue(SocketUserIdAtom);
 	const [isRoomInfoLoading, setIsRoomInfoLoading] =
-		useRecoilState(RoomInfoLoadingAtom);
-	const hasGameStarted = useRecoilValue(HasGameStartedAtom);
-	const [modalType, setModalType] = useRecoilState(ModalTypeAtom);
+		useAtom(RoomInfoLoadingAtom);
+	const hasGameStarted = useAtomValue(HasGameStartedAtom);
+	const [modalType, setModalType] = useAtom(ModalTypeAtom);
 	const resetRoomState = useResetRoomState();
 	const { joinRoom, leaveRoom, startGame } = useWebSocket();
 	const isLeaving = useRef(false);

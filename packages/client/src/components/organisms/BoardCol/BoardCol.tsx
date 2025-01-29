@@ -1,4 +1,4 @@
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { BoardDisksAtom, CurrentPlayerAtom, WinnerAtom } from '@state/room';
 import { BOARD_SIZE } from '@constants/BoardSettings';
 import { DiskPlace } from '@molecules/DiskPlace';
@@ -12,9 +12,9 @@ interface BoardColProps {
 
 export function BoardCol(props: BoardColProps) {
 	const { colId } = props;
-	const [boardDisks, setBoardDisks] = useRecoilState(BoardDisksAtom);
-	const [currentPlayer, setCurrentPlayer] = useRecoilState(CurrentPlayerAtom);
-	const [winner, setWinner] = useRecoilState(WinnerAtom);
+	const [boardDisks, setBoardDisks] = useAtom(BoardDisksAtom);
+	const [currentPlayer, setCurrentPlayer] = useAtom(CurrentPlayerAtom);
+	const [winner, setWinner] = useAtom(WinnerAtom);
 
 	const handleClickCol = () => {
 		if (winner || boardDisks[0][colId]) return;

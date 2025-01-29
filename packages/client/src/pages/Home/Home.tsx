@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { RoomInfoAtom } from '@state/room';
 import { useWebSocket } from '@hooks/useWebSocket';
@@ -9,9 +9,9 @@ import { ModalTypeAtom } from '@state/ui';
 export function Home() {
 	const [IsLoading, setIsLoading] = useState(false);
 	const { createRoom } = useWebSocket();
-	const roomInfo = useRecoilValue(RoomInfoAtom);
-	const socketUserId = useRecoilValue(SocketUserIdAtom);
-	const setModalType = useSetRecoilState(ModalTypeAtom);
+	const roomInfo = useAtomValue(RoomInfoAtom);
+	const socketUserId = useAtomValue(SocketUserIdAtom);
+	const setModalType = useSetAtom(ModalTypeAtom);
 	const navigate = useNavigate();
 
 	const handleCreateRoom = () => {
