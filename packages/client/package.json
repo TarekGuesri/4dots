@@ -11,6 +11,7 @@
 	},
 	"dependencies": {
 		"@4dots/shared": "1.0.0",
+		"classnames": "^2.5.1",
 		"jotai": "^2.11.1",
 		"named-urls": "^2.0.1",
 		"react": "^18.2.0",

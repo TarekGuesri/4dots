@@ -21,4 +21,5 @@ export type SocketEventType =
 export type EventErrorsType =
 	| 'Error.RoomNotFound'
 	| 'Error.RoomFull'
-	| 'Error.HostLeft';
+	| 'Error.HostLeft'
+	| 'Error.VisitorLeft';

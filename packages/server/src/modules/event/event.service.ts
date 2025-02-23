@@ -90,19 +90,20 @@ export class EventService {
   }
 
   startGame({ roomId, server, socket }: JoinLeaveStartRoomDTO) {
-    const room = this.rooms.find((room) => room.id === roomId);
+    const roomIndex = this.rooms.findIndex((room) => room.id === roomId);
 
-    if (!room) {
+    if (roomIndex === -1) {
       socket.emit<SocketEventType>('error', {
         type: 'Error.RoomNotFound',
       } as SocketEventErrorPayload);
       return;
     }
 
-    console.log('startGame');
+    const updatedRoom = { ...this.rooms[roomIndex], hasGameStarted: true };
+    this.rooms[roomIndex] = updatedRoom;
 
-    console.log({ room });
-
-    server.to(room.visitorId).emit<SocketEventType>('startGame', room);
+    server
+      .to(updatedRoom.visitorId)
+      .emit<SocketEventType>('startGame', updatedRoom);
   }
 }

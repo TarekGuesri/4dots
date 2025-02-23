@@ -21,6 +21,8 @@ export function BoardCol(props: BoardColProps) {
 
 		const newBoard: BoardDisksType = boardDisks.map((row) => [...row]);
 
+		console.log({ newBoard });
+
 		for (let i = BOARD_SIZE.rows - 1; i >= 0; i--) {
 			if (!newBoard[i][colId]) {
 				newBoard[i][colId] = currentPlayer;

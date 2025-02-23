@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { useAtom, useSetAtom } from 'jotai';
 import { v4 as uuidv4 } from 'uuid';
 import type { EventErrorsType, IRoomInfo } from '@4dots/shared';
-import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
+import { useAtom, useSetAtom } from 'jotai';
 import { SocketUserIdAtom } from '@state/socket';
 import { socket } from '@src/socket';
 import { ModalTypeAtom } from '@state/ui';
+import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
 
 export function useRoomWebSocket() {
 	const [roomInfo, setRoomInfo] = useAtom(RoomInfoAtom);
@@ -22,6 +22,7 @@ export function useRoomWebSocket() {
 			hostId: socketUserId,
 			id: roomId,
 			visitorId: null,
+			hasGameStarted: false,
 		};
 		socket.emit('createRoom', roomInfo);
 		return roomInfo;
@@ -44,6 +45,7 @@ export function useRoomWebSocket() {
 	};
 
 	const handleRoomUpdated = (room: IRoomInfo) => {
+		// If roomInfo is not set and the user is in the room, we update the roomInfo
 		if (
 			!roomInfo &&
 			(room.hostId === socketUserId || room.visitorId === socketUserId)
@@ -56,6 +58,24 @@ export function useRoomWebSocket() {
 		if (roomInfo?.id !== room.id) {
 			return;
 		}
+
+		console.log({
+			room,
+			roomInfo,
+			condition:
+				room.hasGameStarted &&
+				room.visitorId === null &&
+				room.hostId === socketUserId,
+		});
+		// If game has started and the visitor left, we display error
+		if (
+			room.hasGameStarted &&
+			room.visitorId === null &&
+			room.hostId === socketUserId
+		) {
+			setModalType('Error.VisitorLeft');
+		}
+
 		setRoomInfo(room);
 	};
 
@@ -100,7 +120,7 @@ export function useRoomWebSocket() {
 			socket.off('roomDeleted', handleRoomDeleted);
 			socket.off('error', handleError);
 		};
-	}, [roomInfo, socketUserId, setIsRoomInfoLoading]);
+	}, [roomInfo, socketUserId]);
 
 	return { createRoom, joinRoom, leaveRoom };
 }

@@ -3,7 +3,6 @@ import { useAtom, useAtomValue } from 'jotai';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWebSocket } from '@hooks/useWebSocket';
 import {
-	HasGameStartedAtom,
 	RoomInfoAtom,
 	RoomInfoLoadingAtom,
 	useResetRoomState,
@@ -11,6 +10,7 @@ import {
 import { SocketUserIdAtom } from '@state/socket';
 import { ModalTypeAtom } from '@state/ui';
 import { Board } from '@templates/Board';
+import { Button } from '@molecules/Button/Button';
 
 export function Room() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +20,6 @@ export function Room() {
 	const socketUserId = useAtomValue(SocketUserIdAtom);
 	const [isRoomInfoLoading, setIsRoomInfoLoading] =
 		useAtom(RoomInfoLoadingAtom);
-	const hasGameStarted = useAtomValue(HasGameStartedAtom);
 	const [modalType, setModalType] = useAtom(ModalTypeAtom);
 	const resetRoomState = useResetRoomState();
 	const { joinRoom, leaveRoom, startGame } = useWebSocket();
@@ -63,6 +62,11 @@ export function Room() {
 				setIsModalOpen(true);
 				break;
 
+			case 'Error.VisitorLeft':
+				setModalMessage('The other player has left the room.');
+				setIsModalOpen(true);
+				break;
+
 			default:
 				setModalMessage('Something unexpected happened');
 				setIsModalOpen(true);
@@ -97,6 +101,8 @@ export function Room() {
 		return <>Loading...</>;
 	}
 
+	console.log({ modalType, isModalOpen });
+
 	return (
 		<div>
 			{/* Modal for errors */}
@@ -105,12 +111,18 @@ export function Room() {
 					<div className='bg-white rounded-lg p-6 max-w-sm w-full'>
 						<h2 className='text-xl font-bold mb-4'>Error</h2>
 						<p className='mb-4'>{modalMessage}</p>
-						<button
-							onClick={closeModal}
-							className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
-						>
-							Close
-						</button>
+						{modalType === 'Error.VisitorLeft' ? (
+							<Button variant='danger' onClick={handleLeave}>
+								Leave Room
+							</Button>
+						) : (
+							<button
+								onClick={closeModal}
+								className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
+							>
+								Close
+							</button>
+						)}
 					</div>
 				</div>
 			)}
@@ -119,28 +131,26 @@ export function Room() {
 
 			{roomInfo && (
 				<>
-					<button
-						onClick={handleLeave}
-						className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'
-					>
+					<Button variant='danger' onClick={handleLeave}>
 						Leave Room
-					</button>
-					<button
-						onClick={() => startGame(roomInfo.id)}
-						disabled={!roomInfo.visitorId}
-						className={`bg-blue-500 text-white px-4 py-2 rounded ${
-							roomInfo.visitorId ? 'hover:bg-blue-600' : ''
-						} ${!roomInfo.visitorId ? 'disabled:opacity-50' : ''}`}
-					>
-						Start Game
-					</button>
+					</Button>
+
+					{socketUserId === roomInfo.hostId && (
+						<Button
+							onClick={() => startGame()}
+							disabled={!roomInfo.visitorId}
+							className='mx-2'
+						>
+							Start Game
+						</Button>
+					)}
 					<div className='mt-4'>
 						<div>User: {socketUserId}</div>
 						<div>Room: {roomInfo.id}</div>
 						<div>Player1: {roomInfo.hostId}</div>
 						<div>Player2: {roomInfo.visitorId ?? 'None'}</div>
 					</div>
-					{hasGameStarted && <Board />}
+					{roomInfo.hasGameStarted && <Board />}
 				</>
 			)}
 		</div>

@@ -1,25 +1,28 @@
 import { useEffect } from 'react';
 import type { IRoomInfo } from '@4dots/shared';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { HasGameStartedAtom } from '@state/room';
+import { useAtom, useAtomValue } from 'jotai';
 import { SocketUserIdAtom } from '@state/socket';
 import { socket } from '@src/socket';
+import { RoomInfoAtom } from '@state/room';
 
 export function useGameWebSocket() {
 	const socketUserId = useAtomValue(SocketUserIdAtom);
-	const setHasGameStarted = useSetAtom(HasGameStartedAtom);
+	const [roomInfo, setRoomInfo] = useAtom(RoomInfoAtom);
 
-	const startGame = (roomId: string) => {
-		setHasGameStarted(true);
+	const startGame = () => {
+		if (!roomInfo) return;
 
-		socket.emit('startGame', roomId);
+		setRoomInfo({ ...roomInfo, hasGameStarted: true });
+		socket.emit('startGame', roomInfo.id);
 	};
 
 	useEffect(() => {
 		const onGameStarted = (data: IRoomInfo) => {
+			if (!roomInfo) return;
+
 			console.log({ data, socketUserId });
 			if (data.visitorId === socketUserId) {
-				setHasGameStarted(true);
+				setRoomInfo({ ...roomInfo, hasGameStarted: true });
 			}
 		};
 
@@ -28,7 +31,7 @@ export function useGameWebSocket() {
 		return () => {
 			socket.off('startGame', onGameStarted);
 		};
-	}, [socketUserId]);
+	}, [socketUserId, roomInfo]);
 
 	return { startGame };
 }
