@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import type { EventErrorsType, IRoomInfo } from '@4dots/shared';
-import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
+import type {
+	EventErrorsType,
+	IRoomInfo,
+	SocketEventType,
+} from '@4dots/shared';
+import { useAtom, useSetAtom } from 'jotai';
 import { SocketUserIdAtom } from '@state/socket';
 import { socket } from '@src/socket';
 import { ModalTypeAtom } from '@state/ui';
+import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
 
 export function useRoomWebSocket() {
-	const [roomInfo, setRoomInfo] = useRecoilState(RoomInfoAtom);
-	const [socketUserId] = useRecoilState(SocketUserIdAtom);
-	const setIsRoomInfoLoading = useSetRecoilState(RoomInfoLoadingAtom);
-	const setModalTypeAtom = useSetRecoilState(ModalTypeAtom);
+	const [roomInfo, setRoomInfo] = useAtom(RoomInfoAtom);
+	const [socketUserId] = useAtom(SocketUserIdAtom);
+	const setIsRoomInfoLoading = useSetAtom(RoomInfoLoadingAtom);
+	const setModalType = useSetAtom(ModalTypeAtom);
 
 	const createRoom = (): IRoomInfo | null => {
 		if (!socketUserId) {
@@ -22,8 +26,11 @@ export function useRoomWebSocket() {
 			hostId: socketUserId,
 			id: roomId,
 			visitorId: null,
+			player1Id: socketUserId,
+			player2Id: null,
+			hasGameStarted: false,
 		};
-		socket.emit('createRoom', roomInfo);
+		socket.emit<SocketEventType>('createRoom', roomInfo);
 		return roomInfo;
 	};
 
@@ -34,16 +41,17 @@ export function useRoomWebSocket() {
 			leaveRoom();
 		}
 
-		socket.emit('joinRoom', roomId);
+		socket.emit<SocketEventType>('joinRoom', roomId);
 	};
 
 	const leaveRoom = () => {
 		if (!roomInfo) return;
 		setRoomInfo(null);
-		socket.emit('leaveRoom', roomInfo.id);
+		socket.emit<SocketEventType>('leaveRoom', roomInfo.id);
 	};
 
 	const handleRoomUpdated = (room: IRoomInfo) => {
+		// If roomInfo is not set and the user is in the room, we update the roomInfo
 		if (
 			!roomInfo &&
 			(room.hostId === socketUserId || room.visitorId === socketUserId)
@@ -56,6 +64,24 @@ export function useRoomWebSocket() {
 		if (roomInfo?.id !== room.id) {
 			return;
 		}
+
+		console.log({
+			room,
+			roomInfo,
+			condition:
+				room.hasGameStarted &&
+				room.visitorId === null &&
+				room.hostId === socketUserId,
+		});
+		// If game has started and the visitor left, we display error
+		if (
+			room.hasGameStarted &&
+			room.visitorId === null &&
+			room.hostId === socketUserId
+		) {
+			setModalType('Error.VisitorLeft');
+		}
+
 		setRoomInfo(room);
 	};
 
@@ -65,12 +91,12 @@ export function useRoomWebSocket() {
 		}
 		setRoomInfo(null);
 		if (room.hostId !== socketUserId) {
-			setModalTypeAtom('Error.HostLeft');
+			setModalType('Error.HostLeft');
 		}
 	};
 
 	const handleError = (error: { type: EventErrorsType }) => {
-		setModalTypeAtom(error.type);
+		setModalType(error.type);
 		setIsRoomInfoLoading(false);
 	};
 
@@ -87,20 +113,20 @@ export function useRoomWebSocket() {
 			setIsRoomInfoLoading(false);
 		};
 
-		socket.on('createRoom', onCreateRoom);
-		socket.on('joinRoom', onJoinRoom);
-		socket.on('roomUpdated', handleRoomUpdated);
-		socket.on('roomDeleted', handleRoomDeleted);
-		socket.on('error', handleError);
+		socket.on<SocketEventType>('createRoom', onCreateRoom);
+		socket.on<SocketEventType>('joinRoom', onJoinRoom);
+		socket.on<SocketEventType>('roomUpdated', handleRoomUpdated);
+		socket.on<SocketEventType>('roomDeleted', handleRoomDeleted);
+		socket.on<SocketEventType>('error', handleError);
 
 		return () => {
-			socket.off('createRoom', onCreateRoom);
-			socket.off('joinRoom', onJoinRoom);
-			socket.off('roomUpdated', handleRoomUpdated);
-			socket.off('roomDeleted', handleRoomDeleted);
-			socket.off('error', handleError);
+			socket.off<SocketEventType>('createRoom', onCreateRoom);
+			socket.off<SocketEventType>('joinRoom', onJoinRoom);
+			socket.off<SocketEventType>('roomUpdated', handleRoomUpdated);
+			socket.off<SocketEventType>('roomDeleted', handleRoomDeleted);
+			socket.off<SocketEventType>('error', handleError);
 		};
-	}, [roomInfo, socketUserId, setIsRoomInfoLoading]);
+	}, [roomInfo, socketUserId]);
 
 	return { createRoom, joinRoom, leaveRoom };
 }

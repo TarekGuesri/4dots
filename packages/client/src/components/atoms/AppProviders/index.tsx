@@ -1,6 +1,6 @@
 import type { FC, PropsWithChildren } from 'react';
-import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai/react';
 
 export const AppProviders: FC<PropsWithChildren> = ({ children }) => {
-	return <RecoilRoot>{children}</RecoilRoot>;
+	return <JotaiProvider>{children}</JotaiProvider>;
 };
