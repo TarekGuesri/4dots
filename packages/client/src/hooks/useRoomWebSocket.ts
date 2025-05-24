@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import type { EventErrorsType, IRoomInfo } from '@4dots/shared';
+import type {
+	EventErrorsType,
+	IRoomInfo,
+	SocketEventType,
+} from '@4dots/shared';
 import { useAtom, useSetAtom } from 'jotai';
 import { SocketUserIdAtom } from '@state/socket';
 import { socket } from '@src/socket';
@@ -22,9 +26,11 @@ export function useRoomWebSocket() {
 			hostId: socketUserId,
 			id: roomId,
 			visitorId: null,
+			player1Id: socketUserId,
+			player2Id: null,
 			hasGameStarted: false,
 		};
-		socket.emit('createRoom', roomInfo);
+		socket.emit<SocketEventType>('createRoom', roomInfo);
 		return roomInfo;
 	};
 
@@ -35,13 +41,13 @@ export function useRoomWebSocket() {
 			leaveRoom();
 		}
 
-		socket.emit('joinRoom', roomId);
+		socket.emit<SocketEventType>('joinRoom', roomId);
 	};
 
 	const leaveRoom = () => {
 		if (!roomInfo) return;
 		setRoomInfo(null);
-		socket.emit('leaveRoom', roomInfo.id);
+		socket.emit<SocketEventType>('leaveRoom', roomInfo.id);
 	};
 
 	const handleRoomUpdated = (room: IRoomInfo) => {
@@ -107,18 +113,18 @@ export function useRoomWebSocket() {
 			setIsRoomInfoLoading(false);
 		};
 
-		socket.on('createRoom', onCreateRoom);
-		socket.on('joinRoom', onJoinRoom);
-		socket.on('roomUpdated', handleRoomUpdated);
-		socket.on('roomDeleted', handleRoomDeleted);
-		socket.on('error', handleError);
+		socket.on<SocketEventType>('createRoom', onCreateRoom);
+		socket.on<SocketEventType>('joinRoom', onJoinRoom);
+		socket.on<SocketEventType>('roomUpdated', handleRoomUpdated);
+		socket.on<SocketEventType>('roomDeleted', handleRoomDeleted);
+		socket.on<SocketEventType>('error', handleError);
 
 		return () => {
-			socket.off('createRoom', onCreateRoom);
-			socket.off('joinRoom', onJoinRoom);
-			socket.off('roomUpdated', handleRoomUpdated);
-			socket.off('roomDeleted', handleRoomDeleted);
-			socket.off('error', handleError);
+			socket.off<SocketEventType>('createRoom', onCreateRoom);
+			socket.off<SocketEventType>('joinRoom', onJoinRoom);
+			socket.off<SocketEventType>('roomUpdated', handleRoomUpdated);
+			socket.off<SocketEventType>('roomDeleted', handleRoomDeleted);
+			socket.off<SocketEventType>('error', handleError);
 		};
 	}, [roomInfo, socketUserId]);
 

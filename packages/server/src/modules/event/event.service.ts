@@ -8,6 +8,7 @@ import type {
   ClearUserFromRoomDTO,
   CreateRoomDTO,
   JoinLeaveStartRoomDTO,
+  MakeMoveDTO,
 } from './event.dto';
 
 @Injectable()
@@ -50,6 +51,7 @@ export class EventService {
     // If the room is available, set the visitorId
     if (room.hostId !== socket.id) {
       room.visitorId = socket.id;
+      room.player2Id = socket.id;
     }
 
     server
@@ -105,5 +107,21 @@ export class EventService {
     server
       .to(updatedRoom.visitorId)
       .emit<SocketEventType>('startGame', updatedRoom);
+  }
+
+  makeMove({ roomId, newBoard, currentPlayer, winner, server }: MakeMoveDTO) {
+    const room = this.rooms.find((room) => room.id === roomId);
+
+    if (!room) {
+      return;
+    }
+
+    server
+      .to([room.hostId, room.visitorId])
+      .emit<SocketEventType>('boardUpdated', {
+        newBoard,
+        currentPlayer,
+        winner,
+      });
   }
 }

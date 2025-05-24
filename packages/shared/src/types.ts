@@ -16,7 +16,9 @@ export type SocketEventType =
 	| 'roomDeleted'
 	| 'roomUpdated'
 	// Board
-	| 'startGame';
+	| 'startGame'
+	| 'boardUpdated'
+	| 'makeMove';
 
 export type EventErrorsType =
 	| 'Error.RoomNotFound'

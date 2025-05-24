@@ -1,5 +1,9 @@
 import { IRoomInfo } from '@4dots/shared';
-import type { SocketEventType } from '@4dots/shared';
+import type {
+  SocketEventType,
+  BoardDisksType,
+  CurrentPlayerType,
+} from '@4dots/shared';
 import {
   ConnectedSocket,
   MessageBody,
@@ -59,6 +63,19 @@ export class EventGateway {
     @ConnectedSocket() socket: Socket,
   ): Promise<void> {
     this.eventService.startGame({ roomId, socket, server: this.server });
+  }
+
+  @SubscribeMessage<SocketEventType>('makeMove')
+  async makeMove(
+    @MessageBody()
+    body: {
+      newBoard: BoardDisksType;
+      currentPlayer: CurrentPlayerType;
+      roomId: string;
+      winner: CurrentPlayerType | null;
+    },
+  ): Promise<void> {
+    this.eventService.makeMove({ ...body, server: this.server });
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {

@@ -147,8 +147,10 @@ export function Room() {
 					<div className='mt-4'>
 						<div>User: {socketUserId}</div>
 						<div>Room: {roomInfo.id}</div>
-						<div>Player1: {roomInfo.hostId}</div>
-						<div>Player2: {roomInfo.visitorId ?? 'None'}</div>
+						<div>Host: {roomInfo.hostId}</div>
+						<div>Visitor: {roomInfo.visitorId}</div>
+						<div>Player1: {roomInfo.player1Id}</div>
+						<div>Player2: {roomInfo.player2Id ?? 'None'}</div>
 					</div>
 					{roomInfo.hasGameStarted && <Board />}
 				</>
