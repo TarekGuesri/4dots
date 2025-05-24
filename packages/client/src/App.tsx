@@ -20,7 +20,11 @@ const router = createBrowserRouter([
 function App() {
 	console.log('App Render');
 
-	return <RouterProvider router={router} />;
+	return (
+		<div className='bg-neutral-800 h-screen'>
+			<RouterProvider router={router} />
+		</div>
+	);
 }
 
 export default App;
