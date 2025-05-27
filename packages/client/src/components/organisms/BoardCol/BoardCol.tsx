@@ -87,7 +87,7 @@ export function BoardCol(props: BoardColProps) {
 	return (
 		<div
 			className={`flex-1 flex flex-col ${
-				isCurrentPlayer ? 'hover:bg-neutral-600 cursor-pointer' : ''
+				isCurrentPlayer && !winner ? 'hover:bg-neutral-600 cursor-pointer' : ''
 			}`}
 			onClick={handleClickCol}
 		>

@@ -7,6 +7,7 @@ import {
 	CurrentPlayerAtom,
 	RoomInfoAtom,
 	RoomInfoLoadingAtom,
+	WinnerAtom,
 	useResetRoomState,
 } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
@@ -14,6 +15,7 @@ import { ModalTypeAtom } from '@state/ui';
 import { Board } from '@templates/Board';
 import { Button } from '@molecules/Button/Button';
 import { PlayerIndicator } from '@molecules/PlayerIndicator/PlayerIndicator';
+import { RoomPlayerIndicators } from '@organisms/RoomPlayerIndicators/RoomPlayerIndicators';
 
 export function Room() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,6 +27,7 @@ export function Room() {
 	const [isRoomInfoLoading, setIsRoomInfoLoading] =
 		useAtom(RoomInfoLoadingAtom);
 	const [modalType, setModalType] = useAtom(ModalTypeAtom);
+	const winner = useAtomValue(WinnerAtom);
 	const resetRoomState = useResetRoomState();
 	const { joinRoom, leaveRoom, startGame } = useWebSocket();
 	const isLeaving = useRef(false);
@@ -135,7 +138,9 @@ export function Room() {
 
 			{roomInfo && (
 				<div className='container bg-neutral-900 max-h-[700px] mx-auto flex flex-col items-center justify-center max-w-screen-sm gap-8 px-16 py-8 rounded-lg shadow-lg'>
-					{/* <div className='mt-4'>
+					{/* 
+					TODO: Remove this
+					<div className='mt-4'>
 						<div>User: {socketUserId}</div>
 						<div>Room: {roomInfo.id}</div>
 						<div>Host: {roomInfo.hostId}</div>
@@ -143,37 +148,83 @@ export function Room() {
 						<div>Player1: {roomInfo.player1Id}</div>
 						<div>Player2: {roomInfo.player2Id ?? 'None'}</div>
 					</div> */}
-					<div className='flex flex-row gap-8 justify-center items-center w-full'>
-						<PlayerIndicator
-							player={CurrentPlayerType.Player1}
-							currentPlayer={currentPlayer}
-						/>
-						<div className='text-2xl font-bold mt-8 text-neutral-200'>VS</div>
-						<PlayerIndicator
-							player={CurrentPlayerType.Player2}
-							currentPlayer={currentPlayer}
-						/>
-					</div>
-					<div className='text-neutral-200 bg-teal-900 font-medium rounded-lg py-3 px-8'>
-						{(roomInfo?.player1Id === socketUserId &&
-							currentPlayer === CurrentPlayerType.Player1) ||
-						(roomInfo?.player2Id === socketUserId &&
-							currentPlayer === CurrentPlayerType.Player2)
-							? 'Your Turn'
-							: 'Opponent Turn'}
-					</div>
-					{roomInfo.hasGameStarted && <Board />}
-					<div className='mt-4 flex flex-row gap-2'>
-						<Button variant='danger' onClick={handleLeave}>
+
+					{!roomInfo.hasGameStarted && (
+						<>
+							<div className='text-xl text-neutral-200 font-medium py-3 px-8 text-center'>
+								{!roomInfo.visitorId
+									? 'Waiting for opponent to join...'
+									: socketUserId === roomInfo.visitorId
+									? 'Waiting for host to start game...'
+									: 'Someone joined the room. Waiting for you to start game...'}
+							</div>
+							{socketUserId === roomInfo.hostId && (
+								<div className='bg-neutral-800 border border-neutral-700 rounded-lg p-4 w-full max-w-md text-center'>
+									<p className='text-neutral-200 font-medium mb-2'>
+										Share this link with your opponent to join:
+									</p>
+									<div className='flex items-center justify-between bg-neutral-700 rounded-md px-3 py-2 text-sm text-blue-400 font-mono'>
+										<span className='truncate'>
+											{`${window.location.origin}/room/${roomInfo.id}`}
+										</span>
+										<button
+											className='ml-4 px-2 py-1 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded'
+											onClick={() => {
+												navigator.clipboard.writeText(
+													`${window.location.origin}/room/${roomInfo.id}`
+												);
+											}}
+										>
+											Copy
+										</button>
+									</div>
+								</div>
+							)}
+						</>
+					)}
+
+					{roomInfo.hasGameStarted && (
+						<>
+							<div className='flex flex-row gap-8 justify-center items-center w-full'>
+								<PlayerIndicator
+									player={CurrentPlayerType.Player1}
+									currentPlayer={currentPlayer}
+								/>
+								<div className='text-2xl font-bold mt-8 text-neutral-200'>
+									VS
+								</div>
+								<PlayerIndicator
+									player={CurrentPlayerType.Player2}
+									currentPlayer={currentPlayer}
+								/>
+							</div>
+
+							<RoomPlayerIndicators />
+							<Board />
+						</>
+					)}
+					<div className='mt-4 flex flex-row gap-6 justify-between items-center w-[360px]'>
+						<Button variant='danger' onClick={handleLeave} className='w-full'>
 							Leave Room
 						</Button>
-						{socketUserId === roomInfo.hostId && (
+						{socketUserId === roomInfo.hostId &&
+							!roomInfo.hasGameStarted &&
+							!winner && (
+								<Button
+									onClick={() => startGame()}
+									disabled={!roomInfo.visitorId}
+									className='w-full'
+								>
+									Start Game
+								</Button>
+							)}
+						{socketUserId === roomInfo.hostId && winner && (
 							<Button
 								onClick={() => startGame()}
 								disabled={!roomInfo.visitorId}
-								className='mx-2'
+								className='w-full'
 							>
-								Start Game
+								Restart Game
 							</Button>
 						)}
 					</div>

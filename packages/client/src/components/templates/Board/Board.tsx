@@ -1,12 +1,9 @@
 import { useAtomValue } from 'jotai';
-import { CurrentPlayerType } from '@4dots/shared';
-import { BoardDisksAtom, CurrentPlayerAtom, WinnerAtom } from '@state/room';
+import { BoardDisksAtom } from '@state/room';
 import { BoardCol } from '@organisms/BoardCol';
 
 export function Board() {
 	const boardDisks = useAtomValue(BoardDisksAtom);
-	const currentPlayer = useAtomValue(CurrentPlayerAtom);
-	const winner = useAtomValue(WinnerAtom);
 
 	return (
 		<div className='w-full h-full flex justify-center items-center flex-col'>
@@ -21,14 +18,6 @@ export function Board() {
 					<BoardCol key={index} colId={index} />
 				))}
 			</div>
-			<div className='mt-5'>
-				{currentPlayer === CurrentPlayerType.Player1 ? 'Red' : 'Yellow'}
-			</div>
-			{winner && (
-				<div className='mt-5'>
-					Winner: {winner === CurrentPlayerType.Player1 ? 'Red' : 'Yellow'}
-				</div>
-			)}
 		</div>
 	);
 }

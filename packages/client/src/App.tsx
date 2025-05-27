@@ -21,7 +21,7 @@ function App() {
 	console.log('App Render');
 
 	return (
-		<div className='bg-neutral-800 h-screen'>
+		<div className='bg-neutral-800 min-h-screen'>
 			<RouterProvider router={router} />
 		</div>
 	);

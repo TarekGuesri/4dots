@@ -16,18 +16,21 @@ export function Button({
 	...rest
 }: ButtonProps) {
 	const buttonClasses = classNames(
-		'px-4 py-2 font-semibold rounded-lg', // Base classes
+		'px-4 py-2 font-semibold rounded-lg shadow-md', // Base classes
 		{
-			'bg-blue-500 text-white hover:bg-blue-600':
+			'bg-blue-500 text-white hover:bg-blue-600 shadow-blue-500/50':
 				variant === 'primary' && !disabled,
-			'bg-gray-500 text-white hover:bg-gray-600':
+			'bg-gray-500 text-white hover:bg-gray-600 shadow-gray-500/50':
 				variant === 'secondary' && !disabled,
-			'bg-red-500 text-white hover:bg-red-600':
+			'bg-red-500 text-white hover:bg-red-600 shadow-red-500/50':
 				variant === 'danger' && !disabled,
 			'opacity-50 cursor-not-allowed': disabled,
-			'bg-blue-500 text-white': variant === 'primary' && disabled,
-			'bg-gray-500 text-white': variant === 'secondary' && disabled,
-			'bg-red-500 text-white': variant === 'danger' && disabled,
+			'bg-blue-500 text-white shadow-blue-500/50':
+				variant === 'primary' && disabled,
+			'bg-gray-500 text-white shadow-gray-500/50':
+				variant === 'secondary' && disabled,
+			'bg-red-500 text-white shadow-red-500/50':
+				variant === 'danger' && disabled,
 		},
 		className
 	);
