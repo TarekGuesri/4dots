@@ -29,8 +29,12 @@ export function Home() {
 
 	return (
 		<div>
-			Home
-			<button disabled={IsLoading} onClick={handleCreateRoom}>
+			<div className='text-neutral-200 text-2xl font-bold'>Connect 4</div>
+			<button
+				disabled={IsLoading}
+				onClick={handleCreateRoom}
+				className='text-neutral-300 bg-teal-900 rounded-lg py-3 px-8'
+			>
 				{IsLoading ? 'Loading...' : 'Create Room'}
 			</button>
 		</div>

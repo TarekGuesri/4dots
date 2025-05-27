@@ -1,5 +1,10 @@
 import { useEffect } from 'react';
-import type { IRoomInfo, SocketEventType } from '@4dots/shared';
+import type {
+	BoardDisksType,
+	CurrentPlayerType,
+	IRoomInfo,
+	SocketEventType,
+} from '@4dots/shared';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { SocketUserIdAtom } from '@state/socket';
 import { socket } from '@src/socket';
@@ -9,7 +14,6 @@ import {
 	RoomInfoAtom,
 	WinnerAtom,
 } from '@state/room';
-import type { BoardDisksType, CurrentPlayerType } from '@state/types';
 
 export function useGameWebSocket() {
 	const socketUserId = useAtomValue(SocketUserIdAtom);

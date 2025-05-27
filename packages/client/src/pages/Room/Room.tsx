@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { useNavigate, useParams } from 'react-router-dom';
+import { CurrentPlayerType } from '@4dots/shared';
 import { useWebSocket } from '@hooks/useWebSocket';
 import {
 	CurrentPlayerAtom,
@@ -12,8 +13,7 @@ import { SocketUserIdAtom } from '@state/socket';
 import { ModalTypeAtom } from '@state/ui';
 import { Board } from '@templates/Board';
 import { Button } from '@molecules/Button/Button';
-import { Disk } from '@atoms/Disk';
-import { CurrentPlayerType } from '@state/types';
+import { PlayerIndicator } from '@molecules/PlayerIndicator/PlayerIndicator';
 
 export function Room() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -108,11 +108,11 @@ export function Room() {
 	console.log({ modalType, isModalOpen });
 
 	return (
-		<div>
+		<div className='min-h-screen flex items-center justify-center'>
 			{/* Modal for errors */}
 			{isModalOpen && (
 				<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4'>
-					<div className='bg-white rounded-lg p-6 max-w-sm w-full'>
+					<div className='bg-white rounded-lg p-6 w-full'>
 						<h2 className='text-xl font-bold mb-4'>Error</h2>
 						<p className='mb-4'>{modalMessage}</p>
 						{modalType === 'Error.VisitorLeft' ? (
@@ -134,7 +134,7 @@ export function Room() {
 			{/* Room UI */}
 
 			{roomInfo && (
-				<div className='container bg-neutral-900 max-h-[700px] mx-auto max-w-[490px] flex flex-col items-center justify-center max-w-screen-sm gap-8'>
+				<div className='container bg-neutral-900 max-h-[700px] mx-auto flex flex-col items-center justify-center max-w-screen-sm gap-8 px-16 py-8 rounded-lg shadow-lg'>
 					{/* <div className='mt-4'>
 						<div>User: {socketUserId}</div>
 						<div>Room: {roomInfo.id}</div>
@@ -144,31 +144,23 @@ export function Room() {
 						<div>Player2: {roomInfo.player2Id ?? 'None'}</div>
 					</div> */}
 					<div className='flex flex-row gap-8 justify-center items-center w-full'>
-						<div
-							className={`w-1/2 text-center py-2 ml-8 mt-8 rounded-lg bg-neutral-800 flex flex-col items-center justify-center ${
-								currentPlayer === CurrentPlayerType.Player1
-									? 'opacity-100'
-									: 'opacity-50'
-							}`}
-						>
-							<div className='mb-2 text-neutral-200'>
-								Player 1 {roomInfo?.player1Id === socketUserId ? '(You)' : ''}
-							</div>
-							<Disk color='bg-red-500 mb-1' width={35} height={35} />
-						</div>
+						<PlayerIndicator
+							player={CurrentPlayerType.Player1}
+							currentPlayer={currentPlayer}
+						/>
 						<div className='text-2xl font-bold mt-8 text-neutral-200'>VS</div>
-						<div
-							className={`w-1/2 text-center py-2 mr-8 mt-8 rounded-lg bg-neutral-800 flex flex-col items-center justify-center ${
-								currentPlayer === CurrentPlayerType.Player2
-									? 'opacity-100'
-									: 'opacity-50'
-							}`}
-						>
-							<div className='mb-2 text-neutral-200'>
-								Player 2 {roomInfo?.player2Id === socketUserId ? '(You)' : ''}
-							</div>
-							<Disk color='bg-yellow-500 mb-1' width={35} height={35} />
-						</div>
+						<PlayerIndicator
+							player={CurrentPlayerType.Player2}
+							currentPlayer={currentPlayer}
+						/>
+					</div>
+					<div className='text-neutral-200 bg-teal-900 font-medium rounded-lg py-3 px-8'>
+						{(roomInfo?.player1Id === socketUserId &&
+							currentPlayer === CurrentPlayerType.Player1) ||
+						(roomInfo?.player2Id === socketUserId &&
+							currentPlayer === CurrentPlayerType.Player2)
+							? 'Your Turn'
+							: 'Opponent Turn'}
 					</div>
 					{roomInfo.hasGameStarted && <Board />}
 					<div className='mt-4 flex flex-row gap-2'>

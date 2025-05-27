@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
+import { CurrentPlayerType } from '@4dots/shared';
 import { BoardDisksAtom } from '@state/room';
-import { CurrentPlayerType } from '@state/types';
 import { Disk } from '@atoms/Disk';
 
 interface DiskProps {
@@ -21,12 +21,12 @@ export function DiskPlace(props: DiskProps) {
 			return 'bg-yellow-500';
 		}
 
-		return 'bg-white';
+		return 'bg-neutral-800';
 	};
 
 	return (
-		<div className='pointer-events-none flex-1 flex justify-center items-center'>
-			<Disk color={getColor()} />
+		<div className='pointer-events-none flex-1 flex justify-center items-center p-1'>
+			<Disk color={getColor()} hasShadow={true} />
 		</div>
 	);
 }

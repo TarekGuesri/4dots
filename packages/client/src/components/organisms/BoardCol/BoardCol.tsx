@@ -1,4 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
+import type { BoardDisksType } from '@4dots/shared';
+import { CurrentPlayerType } from '@4dots/shared';
 import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
@@ -7,8 +9,6 @@ import {
 } from '@state/room';
 import { BOARD_SIZE } from '@constants/BoardSettings';
 import { DiskPlace } from '@molecules/DiskPlace';
-import type { BoardDisksType } from '@state/types';
-import { CurrentPlayerType } from '@state/types';
 import { checkWinner } from '@utils/helpers';
 import { useWebSocket } from '@hooks/useWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
@@ -87,7 +87,7 @@ export function BoardCol(props: BoardColProps) {
 	return (
 		<div
 			className={`flex-1 flex flex-col ${
-				isCurrentPlayer ? 'hover:bg-sky-600 cursor-pointer' : ''
+				isCurrentPlayer ? 'hover:bg-neutral-600 cursor-pointer' : ''
 			}`}
 			onClick={handleClickCol}
 		>
