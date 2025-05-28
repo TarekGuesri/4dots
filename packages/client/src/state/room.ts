@@ -1,7 +1,6 @@
-import type { IRoomInfo } from '@4dots/shared';
+import type { IRoomInfo, BoardDisksType } from '@4dots/shared';
 import { atom, useSetAtom } from 'jotai';
-import type { BoardDisksType } from './types';
-import { CurrentPlayerType } from './types';
+import { CurrentPlayerType } from '@4dots/shared';
 import { BOARD_SIZE } from '@constants/BoardSettings';
 
 const createEmptyBoard = () =>

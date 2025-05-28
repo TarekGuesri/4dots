@@ -1,5 +1,5 @@
+import type { BoardDisksType, CurrentPlayerType } from '@4dots/shared';
 import { BOARD_SIZE } from '@constants/BoardSettings';
-import type { BoardDisksType, CurrentPlayerType } from '@state/types';
 
 export const checkWinner = (
 	row: number,
