@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CurrentPlayerType } from '@4dots/shared';
+import {
+	VolumeUp as VolumeUpIcon,
+	VolumeOff as VolumeOffIcon,
+	Settings as SettingsIcon,
+} from '@mui/icons-material';
 import { useWebSocket } from '@hooks/useWebSocket';
 import {
 	CurrentPlayerAtom,
@@ -21,6 +26,7 @@ export function Room() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [hasJoined, setHasJoined] = useState(false);
 	const [modalMessage, setModalMessage] = useState('');
+	const [isMuted, setIsMuted] = useState(false);
 	const currentPlayer = useAtomValue(CurrentPlayerAtom);
 	const roomInfo = useAtomValue(RoomInfoAtom);
 	const socketUserId = useAtomValue(SocketUserIdAtom);
@@ -34,6 +40,11 @@ export function Room() {
 	const params = useParams();
 	const navigate = useNavigate();
 
+	const isStartGameVisible =
+		roomInfo && socketUserId === roomInfo.hostId && !roomInfo.hasGameStarted;
+	const isRestartGameVisible =
+		roomInfo && socketUserId === roomInfo.hostId && winner;
+
 	const handleLeave = () => {
 		leaveRoom();
 
@@ -45,6 +56,11 @@ export function Room() {
 		setModalType(null);
 		resetRoomState();
 		navigate('/');
+	};
+
+	const toggleSound = () => {
+		setIsMuted((prev) => !prev);
+		// Optional: trigger sound system (mute/unmute background music or SFX)
 	};
 
 	// Handle modal based on error type
@@ -180,9 +196,29 @@ export function Room() {
 									player={CurrentPlayerType.Player1}
 									currentPlayer={currentPlayer}
 								/>
-								<div className='flex items-center justify-center min-w-[60px] sm:min-w-[80px]'>
+								<div className='flex flex-col items-center justify-center min-w-[60px] sm:min-w-[80px] gap-2'>
 									<div className='text-lg sm:text-2xl font-bold text-neutral-200'>
 										1:00
+									</div>
+									<div className='flex flex-row gap-2'>
+										<button
+											onClick={toggleSound}
+											className='text-neutral-200 hover:text-white transition-colors'
+											aria-label='Toggle Sound'
+										>
+											{isMuted ? (
+												<VolumeOffIcon fontSize='large' />
+											) : (
+												<VolumeUpIcon fontSize='large' />
+											)}
+										</button>
+										<button
+											disabled
+											className='text-neutral-200 hover:text-white transition-colors opacity-50'
+											aria-label='Toggle Sound'
+										>
+											<SettingsIcon fontSize='large' />
+										</button>
 									</div>
 								</div>
 								<PlayerIndicator
@@ -197,22 +233,30 @@ export function Room() {
 							</div>
 						</>
 					)}
-					<div className='mt-4 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-between items-center w-full max-w-[360px] sm:max-w-[480px]'>
-						<Button variant='danger' onClick={handleLeave} className='w-full'>
+					<div
+						className={`mt-4 flex flex-col sm:flex-row gap-4 sm:gap-6 ${
+							isStartGameVisible || isRestartGameVisible
+								? 'justify-between'
+								: 'justify-center'
+						} items-center w-full max-w-[360px] sm:max-w-[480px]`}
+					>
+						<Button
+							variant='danger'
+							onClick={handleLeave}
+							className='w-full max-w-[228px]'
+						>
 							Leave Room
 						</Button>
-						{socketUserId === roomInfo.hostId &&
-							!roomInfo.hasGameStarted &&
-							!winner && (
-								<Button
-									onClick={() => startGame()}
-									disabled={!roomInfo.visitorId}
-									className='w-full'
-								>
-									Start Game
-								</Button>
-							)}
-						{socketUserId === roomInfo.hostId && winner && (
+						{isStartGameVisible && (
+							<Button
+								onClick={() => startGame()}
+								disabled={!roomInfo.visitorId}
+								className='w-full'
+							>
+								Start Game
+							</Button>
+						)}
+						{isRestartGameVisible && (
 							<Button
 								onClick={() => startGame()}
 								disabled={!roomInfo.visitorId}
