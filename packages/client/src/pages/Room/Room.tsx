@@ -111,47 +111,37 @@ export function Room() {
 	console.log({ modalType, isModalOpen });
 
 	return (
-		<div className='min-h-screen flex items-center justify-center'>
+		<div className='min-h-screen flex items-center justify-center p-4'>
 			{/* Modal for errors */}
 			{isModalOpen && (
-				<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4'>
-					<div className='bg-white rounded-lg p-6 w-full'>
+				<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
+					<div className='bg-white rounded-lg p-6 w-full max-w-md mx-4'>
 						<h2 className='text-xl font-bold mb-4'>Error</h2>
-						<p className='mb-4'>{modalMessage}</p>
-						{modalType === 'Error.VisitorLeft' ? (
-							<Button variant='danger' onClick={handleLeave}>
-								Leave Room
-							</Button>
-						) : (
-							<button
-								onClick={closeModal}
-								className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
-							>
-								Close
-							</button>
-						)}
+						<p className='mb-6 text-gray-700'>{modalMessage}</p>
+						<div className='flex justify-end'>
+							{modalType === 'Error.VisitorLeft' ? (
+								<Button variant='danger' onClick={handleLeave}>
+									Leave Room
+								</Button>
+							) : (
+								<button
+									onClick={closeModal}
+									className='bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors'
+								>
+									Close
+								</button>
+							)}
+						</div>
 					</div>
 				</div>
 			)}
 
 			{/* Room UI */}
-
 			{roomInfo && (
-				<div className='container bg-neutral-900 max-h-[700px] mx-auto flex flex-col items-center justify-center max-w-screen-sm gap-8 px-16 py-8 rounded-lg shadow-lg'>
-					{/* 
-					TODO: Remove this
-					<div className='mt-4'>
-						<div>User: {socketUserId}</div>
-						<div>Room: {roomInfo.id}</div>
-						<div>Host: {roomInfo.hostId}</div>
-						<div>Visitor: {roomInfo.visitorId}</div>
-						<div>Player1: {roomInfo.player1Id}</div>
-						<div>Player2: {roomInfo.player2Id ?? 'None'}</div>
-					</div> */}
-
+				<div className='container bg-neutral-900 mx-auto flex flex-col items-center justify-center w-full max-w-2xl gap-6 p-4 sm:p-8 rounded-lg shadow-lg'>
 					{!roomInfo.hasGameStarted && (
 						<>
-							<div className='text-xl text-neutral-200 font-medium py-3 px-8 text-center'>
+							<div className='text-xl text-neutral-200 font-medium py-3 px-4 sm:px-8 text-center'>
 								{!roomInfo.visitorId
 									? 'Waiting for opponent to join...'
 									: socketUserId === roomInfo.visitorId
@@ -160,7 +150,7 @@ export function Room() {
 							</div>
 							{socketUserId === roomInfo.hostId && (
 								<div className='bg-neutral-800 border border-neutral-700 rounded-lg p-4 w-full max-w-md text-center'>
-									<p className='text-neutral-200 font-medium mb-2'>
+									<p className='text-neutral-200 font-medium mb-3'>
 										Share this link with your opponent to join:
 									</p>
 									<div className='flex items-center justify-between bg-neutral-700 rounded-md px-3 py-2 text-sm text-blue-400 font-mono'>
@@ -168,7 +158,7 @@ export function Room() {
 											{`${window.location.origin}/room/${roomInfo.id}`}
 										</span>
 										<button
-											className='ml-4 px-2 py-1 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded'
+											className='ml-4 px-3 py-1 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors'
 											onClick={() => {
 												navigator.clipboard.writeText(
 													`${window.location.origin}/room/${roomInfo.id}`
@@ -185,13 +175,15 @@ export function Room() {
 
 					{roomInfo.hasGameStarted && (
 						<>
-							<div className='flex flex-row gap-8 justify-center items-center w-full'>
+							<div className='flex flex-row gap-4 sm:gap-8 justify-center items-center w-full'>
 								<PlayerIndicator
 									player={CurrentPlayerType.Player1}
 									currentPlayer={currentPlayer}
 								/>
-								<div className='text-2xl font-bold mt-8 text-neutral-200'>
-									VS
+								<div className='flex items-center justify-center min-w-[60px] sm:min-w-[80px]'>
+									<div className='text-lg sm:text-2xl font-bold text-neutral-200'>
+										1:00
+									</div>
 								</div>
 								<PlayerIndicator
 									player={CurrentPlayerType.Player2}
@@ -200,10 +192,12 @@ export function Room() {
 							</div>
 
 							<RoomPlayerIndicators />
-							<Board />
+							<div className='w-full max-w-[360px] sm:max-w-[480px]'>
+								<Board />
+							</div>
 						</>
 					)}
-					<div className='mt-4 flex flex-row gap-6 justify-between items-center w-[360px]'>
+					<div className='mt-4 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-between items-center w-full max-w-[360px] sm:max-w-[480px]'>
 						<Button variant='danger' onClick={handleLeave} className='w-full'>
 							Leave Room
 						</Button>

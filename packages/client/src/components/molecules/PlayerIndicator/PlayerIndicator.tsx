@@ -25,7 +25,7 @@ export function PlayerIndicator(props: PlayerIndicatorProps) {
 
 	return (
 		<div
-			className={`w-1/2 text-center py-2 mt-8 rounded-lg bg-neutral-800 flex flex-col items-center justify-center ${
+			className={`w-1/2 text-center py-2 rounded-lg bg-neutral-800 flex flex-col items-center justify-center ${
 				isCurrentPlayer() ? 'opacity-100' : 'opacity-50'
 			}`}
 			style={{
