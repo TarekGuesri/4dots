@@ -5,6 +5,8 @@ import { RoomInfoAtom } from '@state/room';
 import { useWebSocket } from '@hooks/useWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
 import { ModalTypeAtom } from '@state/ui';
+import { Button } from '@molecules/Button/Button';
+import { Loading } from '@atoms/Loading/Loading';
 
 export function Home() {
 	const [IsLoading, setIsLoading] = useState(false);
@@ -19,6 +21,10 @@ export function Home() {
 		createRoom();
 	};
 
+	const handleShowRules = () => {
+		setModalType('RULES');
+	};
+
 	useEffect(() => {
 		setModalType(null);
 
@@ -27,16 +33,38 @@ export function Home() {
 		}
 	}, [roomInfo]);
 
+	if (!socketUserId) {
+		return <Loading />;
+	}
+
 	return (
-		<div>
-			<div className='text-neutral-200 text-2xl font-bold'>Connect 4</div>
-			<button
-				disabled={IsLoading}
-				onClick={handleCreateRoom}
-				className='text-neutral-300 bg-teal-900 rounded-lg py-3 px-8'
-			>
-				{IsLoading ? 'Loading...' : 'Create Room'}
-			</button>
+		<div className='min-h-screen flex flex-col items-center justify-center p-4'>
+			<div className='text-center space-y-8 max-w-md'>
+				<div className='space-y-4'>
+					<h1 className='text-5xl font-bold text-neutral-100'>Connect 4</h1>
+					<p className='text-neutral-200 text-lg'>
+						Challenge your friends to a classic game of strategy and skill!
+					</p>
+				</div>
+
+				<div className='flex flex-col space-y-4'>
+					<Button
+						disabled={IsLoading}
+						onClick={handleCreateRoom}
+						className='w-full py-4 text-lg'
+					>
+						{IsLoading ? 'Creating Room...' : 'Create Room'}
+					</Button>
+
+					<Button
+						variant='secondary'
+						onClick={handleShowRules}
+						className='w-full py-4 text-lg'
+					>
+						How to Play
+					</Button>
+				</div>
+			</div>
 		</div>
 	);
 }

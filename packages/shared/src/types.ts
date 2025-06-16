@@ -25,3 +25,5 @@ export type EventErrorsType =
 	| 'Error.RoomFull'
 	| 'Error.HostLeft'
 	| 'Error.VisitorLeft';
+
+export type ModalType = EventErrorsType | 'RULES' | null;

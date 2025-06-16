@@ -20,6 +20,7 @@ export function useWebSocket() {
 			setSocketUserId(socket.id ?? null);
 			const user = { id: socket.id };
 
+			// TODO: Add a loading state and error handling when user is connecting to the server
 			socket.emit('identity', user, (response: unknown) => {
 				console.log('Identity:', response);
 			});

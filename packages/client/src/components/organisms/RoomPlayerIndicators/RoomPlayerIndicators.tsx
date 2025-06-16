@@ -53,7 +53,7 @@ export function RoomPlayerIndicators() {
 			<motion.div
 				animate={winnerControls}
 				initial={{ scale: 1, opacity: 0 }}
-				className={`text-neutral-200 font-medium rounded-lg py-3 px-8 w-[178px] text-center bg-teal-900 ${
+				className={`text-neutral-200 font-medium rounded-lg py-3 px-8 w-[178px] text-center ${
 					winner === CurrentPlayerType.Player1 &&
 					roomInfo?.player1Id === socketUserId
 						? 'bg-blue-700'

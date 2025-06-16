@@ -4,13 +4,13 @@ import { Loading } from '@atoms/Loading/Loading';
 
 // Public
 const Home = lazy(() =>
-	import('./Home').then((module) => ({ default: module.Home }))
+	import('./Home/Home').then((module) => ({ default: module.Home }))
 );
 const Room = lazy(() =>
-	import('./Room').then((module) => ({ default: module.Room }))
+	import('./Room/Room').then((module) => ({ default: module.Room }))
 );
 const NotFound = lazy(() =>
-	import('./NotFound').then((module) => ({ default: module.NotFound }))
+	import('./NotFound/NotFound').then((module) => ({ default: module.NotFound }))
 );
 
 // Public

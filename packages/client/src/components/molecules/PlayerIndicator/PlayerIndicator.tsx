@@ -1,5 +1,5 @@
 import { CurrentPlayerType } from '@4dots/shared';
-import { Disk } from '@atoms/Disk';
+import { Disk } from '@atoms/Disk/Disk';
 
 interface PlayerIndicatorProps {
 	player: CurrentPlayerType;

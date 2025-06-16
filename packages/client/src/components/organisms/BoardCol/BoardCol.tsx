@@ -8,7 +8,7 @@ import {
 	WinnerAtom,
 } from '@state/room';
 import { BOARD_SIZE } from '@constants/BoardSettings';
-import { DiskPlace } from '@molecules/DiskPlace';
+import { DiskPlace } from '@molecules/DiskPlace/DiskPlace';
 import { checkWinner } from '@utils/helpers';
 import { useWebSocket } from '@hooks/useWebSocket';
 import { SocketUserIdAtom } from '@state/socket';

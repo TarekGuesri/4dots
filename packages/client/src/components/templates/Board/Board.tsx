@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { BoardDisksAtom } from '@state/room';
-import { BoardCol } from '@organisms/BoardCol';
+import { BoardCol } from '@organisms/BoardCol/BoardCol';
 
 export function Board() {
 	const boardDisks = useAtomValue(BoardDisksAtom);

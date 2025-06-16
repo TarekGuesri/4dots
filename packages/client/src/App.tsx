@@ -1,6 +1,9 @@
+import { useAtomValue } from 'jotai';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { RouteMap } from '@constants/RouteMap';
 import { HomePage, NotFoundPage, RoomPage } from '@pages/pageListAsync';
+import { ModalTypeAtom } from '@state/ui';
+import { RulesModal } from '@molecules/RulesModal/RulesModal';
 
 const router = createBrowserRouter([
 	{
@@ -18,11 +21,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-	console.log('App Render');
+	const modalType = useAtomValue(ModalTypeAtom);
 
 	return (
-		<div className='bg-neutral-800 min-h-screen'>
+		<div className='bg-neutral-800 min-h-screen w-full h-full flex items-center justify-center'>
 			<RouterProvider router={router} />
+			{modalType === 'RULES' && <RulesModal />}
 		</div>
 	);
 }

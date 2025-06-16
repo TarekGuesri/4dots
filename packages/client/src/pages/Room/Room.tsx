@@ -17,7 +17,7 @@ import {
 } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
 import { ModalTypeAtom } from '@state/ui';
-import { Board } from '@templates/Board';
+import { Board } from '@templates/Board/Board';
 import { Button } from '@molecules/Button/Button';
 import { PlayerIndicator } from '@molecules/PlayerIndicator/PlayerIndicator';
 import { RoomPlayerIndicators } from '@organisms/RoomPlayerIndicators/RoomPlayerIndicators';
@@ -60,7 +60,13 @@ export function Room() {
 
 	const toggleSound = () => {
 		setIsMuted((prev) => !prev);
-		// Optional: trigger sound system (mute/unmute background music or SFX)
+		// TODO: trigger sound system (mute/unmute background music or SFX)
+	};
+
+	const closeModal = () => {
+		setIsModalOpen(false);
+		handleLeave();
+		navigate('/');
 	};
 
 	// Handle modal based on error type
@@ -104,6 +110,7 @@ export function Room() {
 		}
 
 		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			console.log('beforeunload');
 			handleLeave();
 			event.returnValue = '';
 		};
@@ -113,12 +120,7 @@ export function Room() {
 		return () => {
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
-	}, [roomInfo, params.roomId]);
-
-	const closeModal = () => {
-		setIsModalOpen(false);
-		navigate('/');
-	};
+	}, [roomInfo, params.roomId, hasJoined]);
 
 	if (isRoomInfoLoading || isLeaving.current) {
 		return <>Loading...</>;
@@ -127,7 +129,7 @@ export function Room() {
 	console.log({ modalType, isModalOpen });
 
 	return (
-		<div className='min-h-screen flex items-center justify-center p-4'>
+		<div className='flex items-center justify-center p-4 w-full'>
 			{/* Modal for errors */}
 			{isModalOpen && (
 				<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>

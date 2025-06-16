@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { CurrentPlayerType } from '@4dots/shared';
 import { BoardDisksAtom } from '@state/room';
-import { Disk } from '@atoms/Disk';
+import { Disk } from '@atoms/Disk/Disk';
 
 interface DiskProps {
 	colId: number;
