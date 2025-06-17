@@ -25,6 +25,7 @@ import { RoomPlayerIndicators } from '@organisms/RoomPlayerIndicators/RoomPlayer
 export function Room() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [hasJoined, setHasJoined] = useState(false);
+	const [showToast, setShowToast] = useState(false);
 	const [modalMessage, setModalMessage] = useState('');
 	const [isMuted, setIsMuted] = useState(false);
 	const currentPlayer = useAtomValue(CurrentPlayerAtom);
@@ -175,16 +176,25 @@ export function Room() {
 										<span className='truncate'>
 											{`${window.location.origin}/room/${roomInfo.id}`}
 										</span>
-										<button
-											className='ml-4 px-3 py-1 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors'
-											onClick={() => {
-												navigator.clipboard.writeText(
-													`${window.location.origin}/room/${roomInfo.id}`
-												);
-											}}
-										>
-											Copy
-										</button>
+										<div className='relative inline-block'>
+											<button
+												className='ml-4 px-3 py-1 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors'
+												onClick={() => {
+													navigator.clipboard.writeText(
+														`${window.location.origin}/room/${roomInfo.id}`
+													);
+													setShowToast(true);
+													setTimeout(() => setShowToast(false), 2000);
+												}}
+											>
+												Copy
+											</button>
+											{showToast && (
+												<div className='absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-neutral-800 text-neutral-200 text-sm px-3 py-1 rounded-md border border-neutral-700 shadow-lg z-50'>
+													Copied!
+												</div>
+											)}
+										</div>
 									</div>
 								</div>
 							)}

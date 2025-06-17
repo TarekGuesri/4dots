@@ -30,6 +30,7 @@
 		"uuidv",
 		"Socket",
 		"websockets",
-		"jotai"
+		"jotai",
+		"Gameplay"
 	]
 }
