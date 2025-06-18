@@ -10,6 +10,8 @@ export interface IRoomInfo {
 	visitorId: string | null;
 	player1Id: string;
 	player2Id: string | null;
+	isPlayer1Rematching: boolean;
+	isPlayer2Rematching: boolean;
 	hasGameStarted: boolean;
 }
 

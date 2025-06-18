@@ -60,3 +60,9 @@ export const checkWinner = (
 
 	return false;
 };
+
+export const isBoardFull = (board: BoardDisksType): boolean => {
+	return board.every((row: Array<CurrentPlayerType | null>) =>
+		row.every((cell: CurrentPlayerType | null) => cell !== null)
+	);
+};

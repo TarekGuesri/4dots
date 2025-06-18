@@ -9,6 +9,7 @@ import {
 } from '@mui/icons-material';
 import { useWebSocket } from '@hooks/useWebSocket';
 import {
+	BoardDisksAtom,
 	CurrentPlayerAtom,
 	RoomInfoAtom,
 	RoomInfoLoadingAtom,
@@ -21,6 +22,7 @@ import { Board } from '@templates/Board/Board';
 import { Button } from '@molecules/Button/Button';
 import { PlayerIndicator } from '@molecules/PlayerIndicator/PlayerIndicator';
 import { RoomPlayerIndicators } from '@organisms/RoomPlayerIndicators/RoomPlayerIndicators';
+import { isBoardFull } from '@utils/helpers';
 
 export function Room() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,21 +32,23 @@ export function Room() {
 	const [isMuted, setIsMuted] = useState(false);
 	const currentPlayer = useAtomValue(CurrentPlayerAtom);
 	const roomInfo = useAtomValue(RoomInfoAtom);
+	console.log({ roomInfo });
+
 	const socketUserId = useAtomValue(SocketUserIdAtom);
 	const [isRoomInfoLoading, setIsRoomInfoLoading] =
 		useAtom(RoomInfoLoadingAtom);
 	const [modalType, setModalType] = useAtom(ModalTypeAtom);
 	const winner = useAtomValue(WinnerAtom);
+	const boardDisks = useAtomValue(BoardDisksAtom);
 	const resetRoomState = useResetRoomState();
-	const { joinRoom, leaveRoom, startGame } = useWebSocket();
+	const { joinRoom, leaveRoom, startGame, askForRematch } = useWebSocket();
 	const isLeaving = useRef(false);
 	const params = useParams();
 	const navigate = useNavigate();
 
 	const isStartGameVisible =
 		roomInfo && socketUserId === roomInfo.hostId && !roomInfo.hasGameStarted;
-	const isRestartGameVisible =
-		roomInfo && socketUserId === roomInfo.hostId && winner;
+	const isRestartGameVisible = winner || isBoardFull(boardDisks);
 
 	const handleLeave = () => {
 		leaveRoom();
@@ -255,7 +259,7 @@ export function Room() {
 						<Button
 							variant='danger'
 							onClick={handleLeave}
-							className='w-full max-w-[228px]'
+							className='w-full w-[230px]'
 						>
 							Leave Room
 						</Button>
@@ -263,18 +267,23 @@ export function Room() {
 							<Button
 								onClick={() => startGame()}
 								disabled={!roomInfo.visitorId}
-								className='w-full'
+								className='w-full w-[230px]'
 							>
 								Start Game
 							</Button>
 						)}
 						{isRestartGameVisible && (
 							<Button
-								onClick={() => startGame()}
+								onClick={() => askForRematch()}
 								disabled={!roomInfo.visitorId}
-								className='w-full'
+								className='w-full w-[230px]'
 							>
-								Restart Game
+								{(roomInfo.player1Id === socketUserId &&
+									roomInfo.isPlayer1Rematching) ||
+								(roomInfo.player2Id === socketUserId &&
+									roomInfo.isPlayer2Rematching)
+									? 'Waiting for opponent...'
+									: 'Play Again'}
 							</Button>
 						)}
 					</div>

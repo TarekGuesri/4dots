@@ -9,7 +9,7 @@ export function useWebSocket() {
 	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [socketUserId, setSocketUserId] = useAtom(SocketUserIdAtom);
 	const { createRoom, joinRoom, leaveRoom } = useRoomWebSocket();
-	const { startGame, makeMove } = useGameWebSocket();
+	const { startGame, makeMove, askForRematch } = useGameWebSocket();
 
 	const onConnect = () => {
 		if (isConnected || socketUserId) {
@@ -47,5 +47,13 @@ export function useWebSocket() {
 		};
 	}, [isConnected, socketUserId]);
 
-	return { createRoom, joinRoom, leaveRoom, startGame, makeMove, isConnected };
+	return {
+		createRoom,
+		joinRoom,
+		leaveRoom,
+		startGame,
+		makeMove,
+		askForRematch,
+		isConnected,
+	};
 }

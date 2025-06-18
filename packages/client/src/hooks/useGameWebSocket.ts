@@ -12,6 +12,7 @@ import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
 	RoomInfoAtom,
+	useBoardRematch,
 	WinnerAtom,
 } from '@state/room';
 
@@ -21,12 +22,25 @@ export function useGameWebSocket() {
 	const setBoardDisks = useSetAtom(BoardDisksAtom);
 	const setCurrentPlayer = useSetAtom(CurrentPlayerAtom);
 	const setWinner = useSetAtom(WinnerAtom);
+	const boardRematch = useBoardRematch();
 
 	const startGame = () => {
 		if (!roomInfo) return;
 
 		setRoomInfo({ ...roomInfo, hasGameStarted: true });
 		socket.emit<SocketEventType>('startGame', roomInfo.id);
+	};
+
+	const askForRematch = () => {
+		if (!roomInfo) return;
+		console.log({ roomInfo, socketUserId });
+		if (roomInfo.player1Id === socketUserId) {
+			setRoomInfo({ ...roomInfo, isPlayer1Rematching: true });
+		} else {
+			setRoomInfo({ ...roomInfo, isPlayer2Rematching: true });
+		}
+
+		socket.emit<SocketEventType>('askForRematch', roomInfo.id);
 	};
 
 	const makeMove = ({
@@ -73,14 +87,29 @@ export function useGameWebSocket() {
 			setWinner(winner);
 		};
 
+		const onRematchRequested = (roomInfo: IRoomInfo) => {
+			console.log('rematch requested', roomInfo);
+			setRoomInfo(roomInfo);
+		};
+
+		const onRematchAccepted = (roomInfo: IRoomInfo) => {
+			console.log('rematch accepted', roomInfo);
+			setRoomInfo(roomInfo);
+			boardRematch();
+		};
+
 		socket.on('startGame', onGameStarted);
 		socket.on('boardUpdated', onBoardUpdated);
+		socket.on('rematchRequested', onRematchRequested);
+		socket.on('rematchAccepted', onRematchAccepted);
 
 		return () => {
 			socket.off('startGame', onGameStarted);
 			socket.off('boardUpdated', onBoardUpdated);
+			socket.off('rematchRequested', onRematchRequested);
+			socket.off('rematchAccepted', onRematchAccepted);
 		};
 	}, [socketUserId, roomInfo]);
 
-	return { startGame, makeMove };
+	return { startGame, makeMove, askForRematch };
 }

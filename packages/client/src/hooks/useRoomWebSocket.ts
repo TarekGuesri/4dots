@@ -28,6 +28,8 @@ export function useRoomWebSocket() {
 			visitorId: null,
 			player1Id: socketUserId,
 			player2Id: null,
+			isPlayer1Rematching: false,
+			isPlayer2Rematching: false,
 			hasGameStarted: false,
 		};
 		socket.emit<SocketEventType>('createRoom', roomInfo);

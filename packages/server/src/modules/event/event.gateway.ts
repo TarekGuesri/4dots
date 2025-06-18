@@ -78,6 +78,14 @@ export class EventGateway {
     this.eventService.makeMove({ ...body, server: this.server });
   }
 
+  @SubscribeMessage<SocketEventType>('askForRematch')
+  async askForRematch(
+    @MessageBody() roomId: string,
+    @ConnectedSocket() socket: Socket,
+  ): Promise<void> {
+    this.eventService.askForRematch({ roomId, socket, server: this.server });
+  }
+
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     console.log('disconnected');
     console.log({ socketId: socket.id });

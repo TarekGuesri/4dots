@@ -5,6 +5,7 @@ import type {
 } from '@4dots/shared';
 import { Injectable } from '@nestjs/common';
 import type {
+  AskForRematchDTO,
   ClearUserFromRoomDTO,
   CreateRoomDTO,
   JoinLeaveStartRoomDTO,
@@ -101,7 +102,12 @@ export class EventService {
       return;
     }
 
-    const updatedRoom = { ...this.rooms[roomIndex], hasGameStarted: true };
+    const updatedRoom = {
+      ...this.rooms[roomIndex],
+      hasGameStarted: true,
+      isPlayer1Rematching: false,
+      isPlayer2Rematching: false,
+    };
     this.rooms[roomIndex] = updatedRoom;
 
     server
@@ -123,5 +129,44 @@ export class EventService {
         currentPlayer,
         winner,
       });
+  }
+
+  askForRematch({ roomId, socket, server }: AskForRematchDTO) {
+    const roomIndex = this.rooms.findIndex((room) => room.id === roomId);
+
+    if (roomIndex === -1) {
+      return;
+    }
+
+    const room = this.rooms[roomIndex];
+    let recipientId: string;
+
+    if (room.player1Id === socket.id) {
+      room.isPlayer1Rematching = true;
+      recipientId = room.player2Id;
+    } else {
+      room.isPlayer2Rematching = true;
+      recipientId = room.player1Id;
+    }
+
+    if (room.isPlayer1Rematching && room.isPlayer2Rematching) {
+      // Both players want to rematch, start a new game
+      const updatedRoom = {
+        ...room,
+        hasGameStarted: true,
+        isPlayer1Rematching: false,
+        isPlayer2Rematching: false,
+      };
+
+      // Update the room in the server's rooms array
+      this.rooms[roomIndex] = updatedRoom;
+
+      server
+        .to([room.player1Id, room.player2Id])
+        .emit<SocketEventType>('rematchAccepted', updatedRoom);
+    } else {
+      // Only one player wants to rematch, notify the other
+      server.to(recipientId).emit<SocketEventType>('rematchRequested', room);
+    }
   }
 }

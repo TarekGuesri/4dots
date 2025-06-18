@@ -9,7 +9,7 @@ import {
 } from '@state/room';
 import { BOARD_SIZE } from '@constants/BoardSettings';
 import { DiskPlace } from '@molecules/DiskPlace/DiskPlace';
-import { checkWinner } from '@utils/helpers';
+import { checkWinner, isBoardFull } from '@utils/helpers';
 import { useWebSocket } from '@hooks/useWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
 
@@ -59,6 +59,9 @@ export function BoardCol(props: BoardColProps) {
 				if (checkWinner(i, colId, currentPlayer, newBoard)) {
 					socketWinner = currentPlayer;
 					setWinner(currentPlayer);
+				} else if (isBoardFull(newBoard)) {
+					socketWinner = null;
+					setWinner(null);
 				} else {
 					setCurrentPlayer(
 						currentPlayer === CurrentPlayerType.Player1
@@ -87,7 +90,9 @@ export function BoardCol(props: BoardColProps) {
 	return (
 		<div
 			className={`flex-1 flex flex-col ${
-				isCurrentPlayer && !winner ? 'hover:bg-neutral-600 cursor-pointer' : ''
+				isCurrentPlayer && !winner && !isBoardFull(boardDisks)
+					? 'hover:bg-neutral-600 cursor-pointer'
+					: ''
 			}`}
 			onClick={handleClickCol}
 		>

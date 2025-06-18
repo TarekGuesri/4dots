@@ -18,7 +18,10 @@ export type SocketEventType =
 	// Board
 	| 'startGame'
 	| 'boardUpdated'
-	| 'makeMove';
+	| 'makeMove'
+	| 'askForRematch'
+	| 'rematchRequested'
+	| 'rematchAccepted';
 
 export type EventErrorsType =
 	| 'Error.RoomNotFound'

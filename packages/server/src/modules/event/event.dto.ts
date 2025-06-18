@@ -30,3 +30,9 @@ export class MakeMoveDTO {
   currentPlayer: CurrentPlayerType;
   winner: CurrentPlayerType | null;
 }
+
+export class AskForRematchDTO {
+  server: Server;
+  roomId: string;
+  socket: Socket;
+}
