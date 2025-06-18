@@ -7,6 +7,7 @@ import {
 	VolumeOff as VolumeOffIcon,
 	Settings as SettingsIcon,
 } from '@mui/icons-material';
+import classNames from 'classnames';
 import { useWebSocket } from '@hooks/useWebSocket';
 import {
 	BoardDisksAtom,
@@ -250,11 +251,12 @@ export function Room() {
 						</>
 					)}
 					<div
-						className={`mt-4 flex flex-col sm:flex-row gap-4 sm:gap-6 ${
+						className={classNames(
+							'flex flex-col sm:flex-row gap-4 sm:gap-6 items-center w-full max-w-[360px] sm:max-w-[480px]',
 							isStartGameVisible || isRestartGameVisible
 								? 'justify-between'
 								: 'justify-center'
-						} items-center w-full max-w-[360px] sm:max-w-[480px]`}
+						)}
 					>
 						<Button
 							variant='danger'

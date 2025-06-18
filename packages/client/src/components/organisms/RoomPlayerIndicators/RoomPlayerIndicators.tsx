@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { CurrentPlayerType } from '@4dots/shared';
 import { useAtomValue } from 'jotai';
+import classNames from 'classnames';
 import {
 	CurrentPlayerAtom,
 	RoomInfoAtom,
@@ -78,9 +79,10 @@ export function RoomPlayerIndicators() {
 			<motion.div
 				animate={winnerControls}
 				initial={{ scale: 1, opacity: 0 }}
-				className={`text-neutral-200 font-medium rounded-lg py-3 px-8 w-[178px] text-center ${
+				className={classNames(
+					'text-neutral-200 font-medium rounded-lg py-3 px-8 w-[178px] text-center',
 					isWinner ? 'bg-blue-700' : 'bg-red-700'
-				}`}
+				)}
 			>
 				{isWinner ? 'You won! 🥳' : 'You lost! 😢'}
 			</motion.div>

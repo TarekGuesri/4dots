@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import type { BoardDisksType } from '@4dots/shared';
 import { CurrentPlayerType } from '@4dots/shared';
+import classNames from 'classnames';
 import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
@@ -89,11 +90,12 @@ export function BoardCol(props: BoardColProps) {
 
 	return (
 		<div
-			className={`flex-1 flex flex-col ${
+			className={classNames(
+				'flex-1 flex flex-col',
 				isCurrentPlayer && !winner && !isBoardFull(boardDisks)
 					? 'hover:bg-neutral-600 cursor-pointer'
 					: ''
-			}`}
+			)}
 			onClick={handleClickCol}
 		>
 			{boardDisks.map((_, index) => (
