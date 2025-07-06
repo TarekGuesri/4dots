@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { RoomInfoAtom } from '@state/room';
-import { useWebSocket } from '@hooks/useWebSocket';
+import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
 import { SocketUserIdAtom } from '@state/socket';
 import { ModalTypeAtom } from '@state/ui';
 import { Button } from '@molecules/Button/Button';
@@ -10,11 +10,11 @@ import { Loading } from '@atoms/Loading/Loading';
 
 export function Home() {
 	const [IsLoading, setIsLoading] = useState(false);
-	const { createRoom } = useWebSocket();
+	const navigate = useNavigate();
+	const { createRoom } = useWebSocketContext();
 	const roomInfo = useAtomValue(RoomInfoAtom);
 	const socketUserId = useAtomValue(SocketUserIdAtom);
 	const setModalType = useSetAtom(ModalTypeAtom);
-	const navigate = useNavigate();
 
 	const handleCreateRoom = () => {
 		setIsLoading(true);

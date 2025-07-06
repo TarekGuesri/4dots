@@ -8,7 +8,7 @@ import {
 	Settings as SettingsIcon,
 } from '@mui/icons-material';
 import classNames from 'classnames';
-import { useWebSocket } from '@hooks/useWebSocket';
+import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
 import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
@@ -18,7 +18,7 @@ import {
 	useResetRoomState,
 } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
-import { ModalTypeAtom } from '@state/ui';
+import { ModalTypeAtom, SoundAtom } from '@state/ui';
 import { Board } from '@templates/Board/Board';
 import { Button } from '@molecules/Button/Button';
 import { PlayerIndicator } from '@molecules/PlayerIndicator/PlayerIndicator';
@@ -30,11 +30,9 @@ export function Room() {
 	const [hasJoined, setHasJoined] = useState(false);
 	const [showToast, setShowToast] = useState(false);
 	const [modalMessage, setModalMessage] = useState('');
-	const [isMuted, setIsMuted] = useState(false);
 	const currentPlayer = useAtomValue(CurrentPlayerAtom);
 	const roomInfo = useAtomValue(RoomInfoAtom);
-	console.log({ roomInfo });
-
+	const [soundEnabled, setSoundEnabled] = useAtom(SoundAtom);
 	const socketUserId = useAtomValue(SocketUserIdAtom);
 	const [isRoomInfoLoading, setIsRoomInfoLoading] =
 		useAtom(RoomInfoLoadingAtom);
@@ -42,7 +40,8 @@ export function Room() {
 	const winner = useAtomValue(WinnerAtom);
 	const boardDisks = useAtomValue(BoardDisksAtom);
 	const resetRoomState = useResetRoomState();
-	const { joinRoom, leaveRoom, startGame, askForRematch } = useWebSocket();
+	const { joinRoom, leaveRoom, startGame, askForRematch } =
+		useWebSocketContext();
 	const isLeaving = useRef(false);
 	const params = useParams();
 	const navigate = useNavigate();
@@ -65,8 +64,7 @@ export function Room() {
 	};
 
 	const toggleSound = () => {
-		setIsMuted((prev) => !prev);
-		// TODO: trigger sound system (mute/unmute background music or SFX)
+		setSoundEnabled((prev) => !prev);
 	};
 
 	const closeModal = () => {
@@ -223,10 +221,10 @@ export function Room() {
 											className='text-neutral-200 hover:text-white transition-colors'
 											aria-label='Toggle Sound'
 										>
-											{isMuted ? (
-												<VolumeOffIcon fontSize='large' />
-											) : (
+											{soundEnabled ? (
 												<VolumeUpIcon fontSize='large' />
+											) : (
+												<VolumeOffIcon fontSize='large' />
 											)}
 										</button>
 										<button
@@ -261,7 +259,7 @@ export function Room() {
 						<Button
 							variant='danger'
 							onClick={handleLeave}
-							className='w-full w-[230px]'
+							className='w-full max-w-[230px]'
 						>
 							Leave Room
 						</Button>
@@ -269,7 +267,7 @@ export function Room() {
 							<Button
 								onClick={() => startGame()}
 								disabled={!roomInfo.visitorId}
-								className='w-full w-[230px]'
+								className='w-full max-w-[230px]'
 							>
 								Start Game
 							</Button>
@@ -278,7 +276,7 @@ export function Room() {
 							<Button
 								onClick={() => askForRematch()}
 								disabled={!roomInfo.visitorId}
-								className='w-full w-[230px]'
+								className='w-full max-w-[230px]'
 							>
 								{(roomInfo.player1Id === socketUserId &&
 									roomInfo.isPlayer1Rematching) ||

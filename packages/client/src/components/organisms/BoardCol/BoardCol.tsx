@@ -11,7 +11,7 @@ import {
 import { BOARD_SIZE } from '@constants/BoardSettings';
 import { DiskPlace } from '@molecules/DiskPlace/DiskPlace';
 import { checkWinner, isBoardFull } from '@utils/helpers';
-import { useWebSocket } from '@hooks/useWebSocket';
+import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
 import { SocketUserIdAtom } from '@state/socket';
 
 interface BoardColProps {
@@ -25,7 +25,7 @@ export function BoardCol(props: BoardColProps) {
 	const roomInfo = useAtomValue(RoomInfoAtom);
 	const [winner, setWinner] = useAtom(WinnerAtom);
 	const socketUserId = useAtomValue(SocketUserIdAtom);
-	const { makeMove } = useWebSocket();
+	const { makeMove } = useWebSocketContext();
 
 	const isCurrentPlayer =
 		(currentPlayer === CurrentPlayerType.Player1 &&
