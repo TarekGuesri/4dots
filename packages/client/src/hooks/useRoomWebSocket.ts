@@ -1,15 +1,17 @@
+import { useAtom, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+
+import { socket } from '@src/socket';
+import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
+import { SocketUserIdAtom } from '@state/socket';
+import { ModalTypeAtom } from '@state/ui';
+
 import type {
 	EventErrorsType,
 	IRoomInfo,
 	SocketEventType,
 } from '@4dots/shared';
-import { useAtom, useSetAtom } from 'jotai';
-import { SocketUserIdAtom } from '@state/socket';
-import { socket } from '@src/socket';
-import { ModalTypeAtom } from '@state/ui';
-import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
 
 export function useRoomWebSocket() {
 	const [roomInfo, setRoomInfo] = useAtom(RoomInfoAtom);
@@ -75,6 +77,7 @@ export function useRoomWebSocket() {
 				room.visitorId === null &&
 				room.hostId === socketUserId,
 		});
+
 		// If game has started and the visitor left, we display error
 		if (
 			room.hasGameStarted &&
@@ -84,6 +87,14 @@ export function useRoomWebSocket() {
 			setModalType('Error.VisitorLeft');
 		}
 
+		// If visitor was cleared (disconnected), clear room state
+		if (roomInfo?.visitorId && !room.visitorId) {
+			console.log('Visitor disconnected, clearing room state');
+			setRoomInfo(null);
+			setModalType('Error.VisitorLeft');
+			return;
+		}
+
 		setRoomInfo(room);
 	};
 
@@ -91,9 +102,15 @@ export function useRoomWebSocket() {
 		if (roomInfo?.id !== room.id) {
 			return;
 		}
+		console.log('Room deleted, clearing room state');
 		setRoomInfo(null);
+		setIsRoomInfoLoading(false);
+
+		// Show appropriate error message based on who left
 		if (room.hostId !== socketUserId) {
 			setModalType('Error.HostLeft');
+		} else {
+			setModalType('Error.RoomDeleted');
 		}
 	};
 

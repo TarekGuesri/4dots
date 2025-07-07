@@ -13,7 +13,8 @@
 			"@services/*": ["services/*"],
 			"@state/*": ["state/*"],
 			"@theme/*": ["theme/*"],
-			"@types/*": ["types/*"],
+			"@app-types": ["types"],
+			"@app-types/*": ["types/*"],
 			"@utils/*": ["utils/*"],
 			"@src/*": ["./*"]
 		}

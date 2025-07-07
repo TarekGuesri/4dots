@@ -1,20 +1,30 @@
-import { useNavigate } from 'react-router-dom';
+import { Help as HelpIcon, PlayArrow as PlayIcon } from '@mui/icons-material';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
+import { Loading } from '@atoms/Loading/Loading';
+import { Button } from '@molecules/Button/Button';
+import { GameStats } from '@molecules/GameStats/GameStats';
 import { RoomInfoAtom } from '@state/room';
-import { useWebSocket } from '@hooks/useWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
 import { ModalTypeAtom } from '@state/ui';
-import { Button } from '@molecules/Button/Button';
-import { Loading } from '@atoms/Loading/Loading';
 
 export function Home() {
 	const [IsLoading, setIsLoading] = useState(false);
-	const { createRoom } = useWebSocket();
+	const navigate = useNavigate();
+	const {
+		createRoom,
+		isConnected,
+		isConnecting,
+		reconnectAttempts,
+		lastDisconnectReason,
+		manualReconnect,
+	} = useWebSocketContext();
 	const roomInfo = useAtomValue(RoomInfoAtom);
 	const socketUserId = useAtomValue(SocketUserIdAtom);
 	const setModalType = useSetAtom(ModalTypeAtom);
-	const navigate = useNavigate();
 
 	const handleCreateRoom = () => {
 		setIsLoading(true);
@@ -33,34 +43,115 @@ export function Home() {
 		}
 	}, [roomInfo]);
 
+	// Show loading while connecting to WebSocket
+	if (isConnecting) {
+		return (
+			<div className='flex min-h-screen items-center justify-center'>
+				<div className='glass rounded-2xl p-8 text-center'>
+					<Loading />
+					<p className='mt-4 text-lg text-slate-200'>
+						{reconnectAttempts > 0
+							? `Reconnecting... (Attempt ${reconnectAttempts}/5)`
+							: 'Connecting to server...'}
+					</p>
+					{reconnectAttempts > 0 && (
+						<p className='mt-2 text-sm text-slate-400'>
+							Connection lost. Trying to reconnect...
+						</p>
+					)}
+				</div>
+			</div>
+		);
+	}
+
+	// Show error if not connected and not connecting
+	if (!isConnected) {
+		return (
+			<div className='flex min-h-screen items-center justify-center'>
+				<div className='glass rounded-2xl p-8 text-center'>
+					<div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500'>
+						<span className='text-xl text-white'>!</span>
+					</div>
+					<p className='text-lg text-slate-200'>Connection lost</p>
+					<p className='mt-2 text-sm text-slate-400'>
+						{lastDisconnectReason === 'io server disconnect'
+							? 'Server disconnected you. Please try again.'
+							: 'Unable to connect to the game server.'}
+					</p>
+					<div className='mt-4 space-y-2'>
+						<button
+							onClick={manualReconnect}
+							className='rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700'
+						>
+							Reconnect
+						</button>
+						<button
+							onClick={() => window.location.reload()}
+							className='block w-full rounded-lg bg-gray-600 px-4 py-2 text-white hover:bg-gray-700'
+						>
+							Refresh Page
+						</button>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	// Show loading while waiting for socket user ID
 	if (!socketUserId) {
-		return <Loading />;
+		return (
+			<div className='flex min-h-screen items-center justify-center'>
+				<div className='glass rounded-2xl p-8 text-center'>
+					<Loading />
+					<p className='mt-4 text-lg text-slate-200'>Initializing...</p>
+				</div>
+			</div>
+		);
 	}
 
 	return (
-		<div className='min-h-screen flex flex-col items-center justify-center p-4'>
-			<div className='text-center space-y-8 max-w-md'>
-				<div className='space-y-4'>
-					<h1 className='text-5xl font-bold text-neutral-100'>Connect 4</h1>
-					<p className='text-neutral-200 text-lg'>
+		<div className='relative flex min-h-screen flex-col items-center justify-center p-4'>
+			<div className='animate-slide-in w-full max-w-4xl space-y-8 text-center'>
+				<div className='space-y-6'>
+					<div className='relative'>
+						<h1 className='bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-6xl font-bold text-transparent drop-shadow-lg md:text-7xl'>
+							Connect 4
+						</h1>
+					</div>
+
+					<p className='mx-auto max-w-2xl text-xl leading-relaxed text-slate-200 md:text-2xl'>
 						Challenge your friends to a classic game of strategy and skill!
+						<br />
+						<span className='font-medium text-purple-300'>
+							Can you connect 4 and claim victory?
+						</span>
 					</p>
 				</div>
 
-				<div className='flex flex-col space-y-4'>
+				{/* Game Stats Preview */}
+				<div className='flex justify-center'>
+					<GameStats />
+				</div>
+
+				{/* Action Buttons */}
+				<div className='mx-auto flex max-w-md flex-col items-center justify-center gap-4 sm:flex-row'>
 					<Button
 						disabled={IsLoading}
 						onClick={handleCreateRoom}
-						className='w-full py-4 text-lg'
+						className='btn-glow animate-bounce-in w-full px-8 py-4 text-lg font-semibold sm:w-auto'
+						style={{ animationDelay: '0.2s' }}
 					>
-						{IsLoading ? 'Creating Room...' : 'Create Room'}
+						<PlayIcon className='mr-2' />
+						{IsLoading ? 'Creating Room...' : 'Start Game'}
 					</Button>
 
 					<Button
 						variant='secondary'
 						onClick={handleShowRules}
-						className='w-full py-4 text-lg'
+						className='btn-glow animate-bounce-in w-full px-8 py-4 text-lg font-semibold sm:w-auto'
+						style={{ animationDelay: '0.4s' }}
 					>
+						<HelpIcon className='mr-2' />
 						How to Play
 					</Button>
 				</div>

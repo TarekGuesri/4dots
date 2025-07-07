@@ -1,11 +1,12 @@
-import type { BoardDisksType, CurrentPlayerType } from '@4dots/shared';
 import { BOARD_SIZE } from '@constants/BoardSettings';
+
+import type { BoardDisksType, CurrentPlayerType } from '@4dots/shared';
 
 export const checkWinner = (
 	row: number,
 	col: number,
 	currentPlayer: CurrentPlayerType,
-	boardDisks: BoardDisksType
+	boardDisks: BoardDisksType,
 ): boolean => {
 	const directions = [
 		[0, 1], // Horizontal
@@ -63,6 +64,6 @@ export const checkWinner = (
 
 export const isBoardFull = (board: BoardDisksType): boolean => {
 	return board.every((row: Array<CurrentPlayerType | null>) =>
-		row.every((cell: CurrentPlayerType | null) => cell !== null)
+		row.every((cell: CurrentPlayerType | null) => cell !== null),
 	);
 };

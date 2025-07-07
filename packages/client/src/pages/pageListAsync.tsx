@@ -1,16 +1,20 @@
-import type { FC } from 'react';
 import { Suspense, lazy } from 'react';
+
 import { Loading } from '@atoms/Loading/Loading';
+
+import type { FC } from 'react';
 
 // Public
 const Home = lazy(() =>
-	import('./Home/Home').then((module) => ({ default: module.Home }))
+	import('./Home/Home').then((module) => ({ default: module.Home })),
 );
 const Room = lazy(() =>
-	import('./Room/Room').then((module) => ({ default: module.Room }))
+	import('./Room/Room').then((module) => ({ default: module.Room })),
 );
 const NotFound = lazy(() =>
-	import('./NotFound/NotFound').then((module) => ({ default: module.NotFound }))
+	import('./NotFound/NotFound').then((module) => ({
+		default: module.NotFound,
+	})),
 );
 
 // Public

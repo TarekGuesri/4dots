@@ -1,18 +1,19 @@
-import { useAtom, useAtomValue } from 'jotai';
-import type { BoardDisksType } from '@4dots/shared';
 import { CurrentPlayerType } from '@4dots/shared';
-import classNames from 'classnames';
+import { useAtom, useAtomValue } from 'jotai';
+
+import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
+import { BOARD_SIZE } from '@constants/BoardSettings';
+import { DiskPlace } from '@molecules/DiskPlace/DiskPlace';
 import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
 	RoomInfoAtom,
 	WinnerAtom,
 } from '@state/room';
-import { BOARD_SIZE } from '@constants/BoardSettings';
-import { DiskPlace } from '@molecules/DiskPlace/DiskPlace';
-import { checkWinner, isBoardFull } from '@utils/helpers';
-import { useWebSocket } from '@hooks/useWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
+import { checkWinner, isBoardFull } from '@utils/helpers';
+
+import type { BoardDisksType } from '@4dots/shared';
 
 interface BoardColProps {
 	colId: number;
@@ -25,7 +26,7 @@ export function BoardCol(props: BoardColProps) {
 	const roomInfo = useAtomValue(RoomInfoAtom);
 	const [winner, setWinner] = useAtom(WinnerAtom);
 	const socketUserId = useAtomValue(SocketUserIdAtom);
-	const { makeMove } = useWebSocket();
+	const { makeMove } = useWebSocketContext();
 
 	const isCurrentPlayer =
 		(currentPlayer === CurrentPlayerType.Player1 &&
@@ -33,22 +34,12 @@ export function BoardCol(props: BoardColProps) {
 		(currentPlayer === CurrentPlayerType.Player2 &&
 			roomInfo?.player2Id === socketUserId);
 
+	const isColumnFull = boardDisks[0][colId] !== null;
+	const canClick =
+		!winner && !isColumnFull && isCurrentPlayer && roomInfo?.hasGameStarted;
+
 	const handleClickCol = () => {
-		if (winner || boardDisks[0][colId]) return;
-
-		if (
-			currentPlayer === CurrentPlayerType.Player1 &&
-			roomInfo?.player1Id !== socketUserId
-		) {
-			return;
-		}
-
-		if (
-			currentPlayer === CurrentPlayerType.Player2 &&
-			roomInfo?.player2Id !== socketUserId
-		) {
-			return;
-		}
+		if (!canClick) return;
 
 		const newBoard: BoardDisksType = boardDisks.map((row) => [...row]);
 		let socketWinner = null;
@@ -67,7 +58,7 @@ export function BoardCol(props: BoardColProps) {
 					setCurrentPlayer(
 						currentPlayer === CurrentPlayerType.Player1
 							? CurrentPlayerType.Player2
-							: CurrentPlayerType.Player1
+							: CurrentPlayerType.Player1,
 					);
 				}
 
@@ -84,20 +75,8 @@ export function BoardCol(props: BoardColProps) {
 		}
 	};
 
-	if (winner) {
-		console.log({ winner });
-	}
-
 	return (
-		<div
-			className={classNames(
-				'flex-1 flex flex-col',
-				isCurrentPlayer && !winner && !isBoardFull(boardDisks)
-					? 'hover:bg-neutral-600 cursor-pointer'
-					: ''
-			)}
-			onClick={handleClickCol}
-		>
+		<div className='flex h-full w-full flex-col' onClick={handleClickCol}>
 			{boardDisks.map((_, index) => (
 				<DiskPlace key={index} colId={colId} rowId={index} />
 			))}

@@ -1,6 +1,6 @@
+import react from '@vitejs/plugin-react';
 import { join } from 'path';
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import tsConfig from './tsconfig.paths.json';
 
 const tsPaths = tsConfig.compilerOptions.paths;
@@ -12,10 +12,10 @@ const alias = Object.keys(tsPaths).reduce(
 		[key.replace(/\*$/, '')]: join(
 			ROOT,
 			tsConfig.compilerOptions.baseUrl,
-			tsPaths[key][0].replace(/^\.\//, '/').replace(/\*$/, '')
+			tsPaths[key][0].replace(/^\.\//, '/').replace(/\*$/, ''),
 		),
 	}),
-	{}
+	{},
 );
 
 // https://vitejs.dev/config/

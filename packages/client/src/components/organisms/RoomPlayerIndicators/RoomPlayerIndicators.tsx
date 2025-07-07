@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
 import { CurrentPlayerType } from '@4dots/shared';
-import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
+import { motion, useAnimation } from 'framer-motion';
+import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
+
 import {
+	BoardDisksAtom,
 	CurrentPlayerAtom,
 	RoomInfoAtom,
 	WinnerAtom,
-	BoardDisksAtom,
 } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
 import { isBoardFull } from '@utils/helpers';
@@ -61,9 +62,11 @@ export function RoomPlayerIndicators() {
 			<motion.div
 				animate={winnerControls}
 				initial={{ scale: 1, opacity: 0 }}
-				className='text-neutral-200 font-medium rounded-lg py-3 px-8 w-[178px] text-center bg-neutral-700'
+				className='glass rounded-lg border-2 border-slate-600 p-3 text-center shadow-lg sm:rounded-xl sm:p-4'
 			>
-				It&apos;s a draw! 🤝
+				<div className='text-sm font-semibold text-slate-200 sm:text-base'>
+					It&apos;s a draw! 🤝
+				</div>
 			</motion.div>
 		);
 	}
@@ -80,11 +83,20 @@ export function RoomPlayerIndicators() {
 				animate={winnerControls}
 				initial={{ scale: 1, opacity: 0 }}
 				className={classNames(
-					'text-neutral-200 font-medium rounded-lg py-3 px-8 w-[178px] text-center',
-					isWinner ? 'bg-blue-700' : 'bg-red-700'
+					'glass rounded-lg border-2 p-3 text-center shadow-lg sm:rounded-xl sm:p-4',
+					isWinner
+						? 'border-green-500 shadow-green-500/25'
+						: 'border-red-500 shadow-red-500/25',
 				)}
 			>
-				{isWinner ? 'You won! 🥳' : 'You lost! 😢'}
+				<div
+					className={classNames(
+						'text-sm font-semibold sm:text-base',
+						isWinner ? 'text-green-400' : 'text-red-400',
+					)}
+				>
+					{isWinner ? 'You won! 🥳' : 'You lost! 😢'}
+				</div>
 			</motion.div>
 		);
 	}
@@ -92,9 +104,21 @@ export function RoomPlayerIndicators() {
 	return (
 		<motion.div
 			animate={shakeControls}
-			className='text-neutral-200 bg-teal-900 font-medium rounded-lg py-3 px-8 w-[178px] text-center'
+			className={classNames(
+				'glass rounded-lg border-2 p-3 text-center shadow-lg transition-all duration-300 sm:rounded-xl sm:p-4',
+				isYourTurn
+					? 'border-purple-400 shadow-purple-500/25'
+					: 'border-slate-600 opacity-70',
+			)}
 		>
-			{isYourTurn ? 'Your turn' : 'Opponent turn'}
+			<div
+				className={classNames(
+					'text-sm font-semibold sm:text-base',
+					isYourTurn ? 'text-slate-300' : 'text-purple-300',
+				)}
+			>
+				{isYourTurn ? 'Your turn' : 'Opponent turn'}
+			</div>
 		</motion.div>
 	);
 }

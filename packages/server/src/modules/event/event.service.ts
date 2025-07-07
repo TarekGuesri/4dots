@@ -16,18 +16,12 @@ import type {
 export class EventService {
   private rooms: Array<IRoomInfo> = [];
 
-  createRoom({ room, server, socket }: CreateRoomDTO) {
-    // Leave any existing room the user is in
-    this.clearUserFromRoom({ server, socket });
-
+  createRoom({ room, server: _server, socket }: CreateRoomDTO) {
     this.rooms.push(room);
     socket.emit<SocketEventType>('createRoom', room);
   }
 
   joinRoom({ roomId, server, socket }: JoinLeaveStartRoomDTO) {
-    // Leave any existing room the user is in
-    this.clearUserFromRoom({ server, socket });
-
     const room = this.rooms.find((room) => room.id === roomId);
 
     if (!room) {
@@ -87,8 +81,27 @@ export class EventService {
     const room = this.rooms.find(
       (room) => room.hostId === socket.id || room.visitorId === socket.id,
     );
+
     if (room) {
-      this.leaveRoom({ roomId: room.id, socket, server });
+      console.log(`User ${socket.id} disconnected from room ${room.id}`);
+
+      // If host disconnects, delete the room and notify both players
+      if (room.hostId === socket.id) {
+        console.log('Host disconnected, deleting room');
+        server
+          .to([room.hostId, room.visitorId])
+          .emit<SocketEventType>('roomDeleted', room);
+        this.rooms = this.rooms.filter((_room) => _room.id !== room.id);
+      }
+      // If visitor disconnects, clear visitor and notify both players
+      else if (room.visitorId === socket.id) {
+        console.log('Visitor disconnected, clearing visitor');
+        room.visitorId = null;
+        room.player2Id = null;
+        server
+          .to([room.hostId, room.visitorId])
+          .emit<SocketEventType>('roomUpdated', room);
+      }
     }
   }
 

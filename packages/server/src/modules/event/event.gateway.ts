@@ -1,9 +1,9 @@
-import { IRoomInfo } from '@4dots/shared';
 import type {
-  SocketEventType,
   BoardDisksType,
   CurrentPlayerType,
+  SocketEventType,
 } from '@4dots/shared';
+import { IRoomInfo } from '@4dots/shared';
 import {
   ConnectedSocket,
   MessageBody,
