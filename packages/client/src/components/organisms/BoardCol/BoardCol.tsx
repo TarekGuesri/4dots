@@ -75,10 +75,6 @@ export function BoardCol(props: BoardColProps) {
 		}
 	};
 
-	if (winner) {
-		console.log({ winner });
-	}
-
 	return (
 		<div className='flex h-full w-full flex-col' onClick={handleClickCol}>
 			{boardDisks.map((_, index) => (

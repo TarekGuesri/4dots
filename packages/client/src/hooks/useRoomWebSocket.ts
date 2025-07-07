@@ -77,6 +77,7 @@ export function useRoomWebSocket() {
 				room.visitorId === null &&
 				room.hostId === socketUserId,
 		});
+
 		// If game has started and the visitor left, we display error
 		if (
 			room.hasGameStarted &&
@@ -86,6 +87,14 @@ export function useRoomWebSocket() {
 			setModalType('Error.VisitorLeft');
 		}
 
+		// If visitor was cleared (disconnected), clear room state
+		if (roomInfo?.visitorId && !room.visitorId) {
+			console.log('Visitor disconnected, clearing room state');
+			setRoomInfo(null);
+			setModalType('Error.VisitorLeft');
+			return;
+		}
+
 		setRoomInfo(room);
 	};
 
@@ -93,9 +102,15 @@ export function useRoomWebSocket() {
 		if (roomInfo?.id !== room.id) {
 			return;
 		}
+		console.log('Room deleted, clearing room state');
 		setRoomInfo(null);
+		setIsRoomInfoLoading(false);
+
+		// Show appropriate error message based on who left
 		if (room.hostId !== socketUserId) {
 			setModalType('Error.HostLeft');
+		} else {
+			setModalType('Error.RoomDeleted');
 		}
 	};
 

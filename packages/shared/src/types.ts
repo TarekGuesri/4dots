@@ -27,6 +27,7 @@ export type EventErrorsType =
 	| 'Error.RoomNotFound'
 	| 'Error.RoomFull'
 	| 'Error.HostLeft'
-	| 'Error.VisitorLeft';
+	| 'Error.VisitorLeft'
+	| 'Error.RoomDeleted';
 
 export type ModalType = EventErrorsType | 'RULES' | null;

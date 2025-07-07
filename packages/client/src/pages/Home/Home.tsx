@@ -14,7 +14,14 @@ import { ModalTypeAtom } from '@state/ui';
 export function Home() {
 	const [IsLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
-	const { createRoom } = useWebSocketContext();
+	const {
+		createRoom,
+		isConnected,
+		isConnecting,
+		reconnectAttempts,
+		lastDisconnectReason,
+		manualReconnect,
+	} = useWebSocketContext();
 	const roomInfo = useAtomValue(RoomInfoAtom);
 	const socketUserId = useAtomValue(SocketUserIdAtom);
 	const setModalType = useSetAtom(ModalTypeAtom);
@@ -36,8 +43,70 @@ export function Home() {
 		}
 	}, [roomInfo]);
 
+	// Show loading while connecting to WebSocket
+	if (isConnecting) {
+		return (
+			<div className='flex min-h-screen items-center justify-center'>
+				<div className='glass rounded-2xl p-8 text-center'>
+					<Loading />
+					<p className='mt-4 text-lg text-slate-200'>
+						{reconnectAttempts > 0
+							? `Reconnecting... (Attempt ${reconnectAttempts}/5)`
+							: 'Connecting to server...'}
+					</p>
+					{reconnectAttempts > 0 && (
+						<p className='mt-2 text-sm text-slate-400'>
+							Connection lost. Trying to reconnect...
+						</p>
+					)}
+				</div>
+			</div>
+		);
+	}
+
+	// Show error if not connected and not connecting
+	if (!isConnected) {
+		return (
+			<div className='flex min-h-screen items-center justify-center'>
+				<div className='glass rounded-2xl p-8 text-center'>
+					<div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500'>
+						<span className='text-xl text-white'>!</span>
+					</div>
+					<p className='text-lg text-slate-200'>Connection lost</p>
+					<p className='mt-2 text-sm text-slate-400'>
+						{lastDisconnectReason === 'io server disconnect'
+							? 'Server disconnected you. Please try again.'
+							: 'Unable to connect to the game server.'}
+					</p>
+					<div className='mt-4 space-y-2'>
+						<button
+							onClick={manualReconnect}
+							className='rounded-lg bg-purple-600 px-4 py-2 text-white hover:bg-purple-700'
+						>
+							Reconnect
+						</button>
+						<button
+							onClick={() => window.location.reload()}
+							className='block w-full rounded-lg bg-gray-600 px-4 py-2 text-white hover:bg-gray-700'
+						>
+							Refresh Page
+						</button>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	// Show loading while waiting for socket user ID
 	if (!socketUserId) {
-		return <Loading />;
+		return (
+			<div className='flex min-h-screen items-center justify-center'>
+				<div className='glass rounded-2xl p-8 text-center'>
+					<Loading />
+					<p className='mt-4 text-lg text-slate-200'>Initializing...</p>
+				</div>
+			</div>
+		);
 	}
 
 	return (

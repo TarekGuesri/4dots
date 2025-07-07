@@ -77,7 +77,7 @@ export function Room() {
 			}, 1000);
 		}
 		return () => clearInterval(interval);
-	}, [roomInfo?.hasGameStarted, winner, boardDisks, setGameTime]);
+	}, [roomInfo?.hasGameStarted, winner, boardDisks]);
 
 	// Update game stats when game ends
 	useEffect(() => {
@@ -95,7 +95,7 @@ export function Room() {
 				updateGameStats('draw');
 			}
 		}
-	}, [winner, boardDisks, updateGameStats, socketUserId, roomInfo]);
+	}, [winner, boardDisks, socketUserId, roomInfo]);
 
 	const formatTime = (seconds: number) => {
 		const mins = Math.floor(seconds / 60);
