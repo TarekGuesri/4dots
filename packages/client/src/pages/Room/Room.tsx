@@ -241,12 +241,15 @@ export function Room() {
 							</div>
 
 							{socketUserId === roomInfo.hostId && (
-								<div className='glass w-full max-w-md rounded-xl border border-slate-600 p-4 text-center sm:rounded-2xl sm:p-6'>
+								<div
+									id='share-link-container'
+									className='glass w-full max-w-[300px] rounded-xl border border-slate-600 p-4 text-center sm:max-w-[400px] sm:rounded-2xl sm:p-6 lg:max-w-[500px]'
+								>
 									<p className='mb-3 text-base font-medium text-slate-200 sm:mb-4 sm:text-lg'>
 										📋 Share this link with your opponent:
 									</p>
 									<div className='flex flex-col items-center justify-between gap-2 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 font-mono text-xs text-blue-400 sm:flex-row sm:gap-0 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm'>
-										<span className='flex-1 truncate text-center sm:text-left'>
+										<span className='w-full truncate text-center text-xs sm:flex-1 sm:text-left sm:text-sm'>
 											{`${window.location.origin}/room/${roomInfo.id}`}
 										</span>
 										<div className='relative inline-block'>
@@ -308,7 +311,7 @@ export function Room() {
 												<div className='mt-1 flex flex-row justify-center gap-1'>
 													<button
 														onClick={toggleSound}
-														className='rounded-lg p-1 text-slate-300 transition-colors hover:bg-slate-700 hover:text-white'
+														className='rounded-lg p-1 text-slate-300 transition-colors hover:text-white'
 														aria-label='Toggle Sound'
 													>
 														{soundEnabled ? (
@@ -319,7 +322,7 @@ export function Room() {
 													</button>
 													<button
 														disabled
-														className='rounded-lg p-1 text-slate-300 opacity-50'
+														className='cursor-not-allowed rounded-lg p-1 text-slate-300 opacity-50'
 														aria-label='Settings'
 													>
 														<SettingsIcon fontSize='small' />
@@ -371,7 +374,7 @@ export function Room() {
 										<div className='flex flex-row justify-center gap-2 sm:gap-3'>
 											<button
 												onClick={toggleSound}
-												className='rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-slate-700 hover:text-white sm:p-2'
+												className='rounded-lg p-1.5 text-slate-300 transition-colors hover:text-white sm:p-2'
 												aria-label='Toggle Sound'
 											>
 												{soundEnabled ? (
@@ -382,7 +385,7 @@ export function Room() {
 											</button>
 											<button
 												disabled
-												className='rounded-lg p-1.5 text-slate-300 opacity-50 sm:p-2'
+												className='cursor-not-allowed rounded-lg p-1.5 text-slate-300 opacity-50 sm:p-2'
 												aria-label='Settings'
 											>
 												<SettingsIcon fontSize='small' />
@@ -404,7 +407,10 @@ export function Room() {
 							<RoomPlayerIndicators />
 
 							{/* Game Board */}
-							<div className='w-full max-w-[300px] sm:max-w-[400px] lg:max-w-[500px]'>
+							<div
+								id='game-board-container'
+								className='w-full max-w-[300px] sm:max-w-[400px] lg:max-w-[500px]'
+							>
 								<Board />
 							</div>
 						</>
@@ -413,7 +419,7 @@ export function Room() {
 					{/* Action Buttons */}
 					<div
 						className={classNames(
-							'flex w-full max-w-[300px] flex-col items-center gap-3 sm:max-w-[400px] sm:flex-row sm:gap-4 lg:max-w-[500px] lg:gap-6',
+							'flex w-full max-w-[300px] flex-col items-center gap-3 px-8 sm:max-w-[400px] sm:flex-row sm:gap-4 sm:px-10 lg:max-w-[500px] lg:gap-6 lg:px-12',
 							isStartGameVisible || isRestartGameVisible
 								? 'justify-between'
 								: 'justify-center',
@@ -422,7 +428,7 @@ export function Room() {
 						<Button
 							variant='danger'
 							onClick={handleLeave}
-							className='w-full max-w-[180px] sm:max-w-[200px]'
+							className='w-full sm:max-w-[200px]'
 						>
 							Leave Room
 						</Button>
@@ -430,7 +436,7 @@ export function Room() {
 							<Button
 								onClick={() => startGame()}
 								disabled={!roomInfo.visitorId}
-								className='w-full max-w-[180px] sm:max-w-[200px]'
+								className='w-full sm:max-w-[200px]'
 							>
 								🎮 Start Game
 							</Button>
@@ -438,14 +444,20 @@ export function Room() {
 						{isRestartGameVisible && (
 							<Button
 								onClick={() => askForRematch()}
-								disabled={!roomInfo.visitorId}
-								className='w-full max-w-[180px] sm:max-w-[200px]'
+								disabled={
+									!roomInfo.visitorId ||
+									(roomInfo.player1Id === socketUserId &&
+										roomInfo.isPlayer1Rematching) ||
+									(roomInfo.player2Id === socketUserId &&
+										roomInfo.isPlayer2Rematching)
+								}
+								className='w-full sm:max-w-[200px]'
 							>
 								{(roomInfo.player1Id === socketUserId &&
 									roomInfo.isPlayer1Rematching) ||
 								(roomInfo.player2Id === socketUserId &&
 									roomInfo.isPlayer2Rematching)
-									? '⏳ Waiting for opponent...'
+									? '⏳ Waiting...'
 									: '🔄 Play Again'}
 							</Button>
 						)}
