@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import config from '../../config';
-import { AppController } from './app.controller';
 import { EventModule } from '../event/event.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [

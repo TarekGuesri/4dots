@@ -1,6 +1,8 @@
 import { useAtomValue } from 'jotai';
-import type { Sound } from '@app-types';
+
 import { SoundAtom } from '@state/ui';
+
+import type { Sound } from '@app-types';
 
 export function usePlaySound() {
 	const soundEnabled = useAtomValue(SoundAtom);

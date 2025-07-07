@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
 import { CurrentPlayerType } from '@4dots/shared';
-import { useAtomValue } from 'jotai';
 import classNames from 'classnames';
+import { motion, useAnimation } from 'framer-motion';
+import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
+
 import {
+	BoardDisksAtom,
 	CurrentPlayerAtom,
 	RoomInfoAtom,
 	WinnerAtom,
-	BoardDisksAtom,
 } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
 import { isBoardFull } from '@utils/helpers';
@@ -61,9 +62,9 @@ export function RoomPlayerIndicators() {
 			<motion.div
 				animate={winnerControls}
 				initial={{ scale: 1, opacity: 0 }}
-				className='glass rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border-2 border-slate-600 shadow-lg'
+				className='glass rounded-lg border-2 border-slate-600 p-3 text-center shadow-lg sm:rounded-xl sm:p-4'
 			>
-				<div className='text-slate-200 font-semibold text-sm sm:text-base'>
+				<div className='text-sm font-semibold text-slate-200 sm:text-base'>
 					It&apos;s a draw! 🤝
 				</div>
 			</motion.div>
@@ -82,16 +83,16 @@ export function RoomPlayerIndicators() {
 				animate={winnerControls}
 				initial={{ scale: 1, opacity: 0 }}
 				className={classNames(
-					'glass rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border-2 shadow-lg',
+					'glass rounded-lg border-2 p-3 text-center shadow-lg sm:rounded-xl sm:p-4',
 					isWinner
 						? 'border-green-500 shadow-green-500/25'
-						: 'border-red-500 shadow-red-500/25'
+						: 'border-red-500 shadow-red-500/25',
 				)}
 			>
 				<div
 					className={classNames(
-						'font-semibold text-sm sm:text-base',
-						isWinner ? 'text-green-400' : 'text-red-400'
+						'text-sm font-semibold sm:text-base',
+						isWinner ? 'text-green-400' : 'text-red-400',
 					)}
 				>
 					{isWinner ? 'You won! 🥳' : 'You lost! 😢'}
@@ -104,16 +105,16 @@ export function RoomPlayerIndicators() {
 		<motion.div
 			animate={shakeControls}
 			className={classNames(
-				'glass rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border-2 shadow-lg transition-all duration-300',
+				'glass rounded-lg border-2 p-3 text-center shadow-lg transition-all duration-300 sm:rounded-xl sm:p-4',
 				isYourTurn
 					? 'border-purple-400 shadow-purple-500/25'
-					: 'border-slate-600 opacity-70'
+					: 'border-slate-600 opacity-70',
 			)}
 		>
 			<div
 				className={classNames(
-					'font-semibold text-sm sm:text-base',
-					isYourTurn ? 'text-slate-300' : 'text-purple-300'
+					'text-sm font-semibold sm:text-base',
+					isYourTurn ? 'text-slate-300' : 'text-purple-300',
 				)}
 			>
 				{isYourTurn ? 'Your turn' : 'Opponent turn'}

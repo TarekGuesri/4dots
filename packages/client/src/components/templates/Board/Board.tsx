@@ -1,6 +1,8 @@
-import { useAtomValue } from 'jotai';
 import { CurrentPlayerType } from '@4dots/shared';
 import classNames from 'classnames';
+import { useAtomValue } from 'jotai';
+
+import { BoardCol } from '@organisms/BoardCol/BoardCol';
 import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
@@ -8,7 +10,6 @@ import {
 	WinnerAtom,
 } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
-import { BoardCol } from '@organisms/BoardCol/BoardCol';
 
 export function Board() {
 	const boardDisks = useAtomValue(BoardDisksAtom);
@@ -24,13 +25,13 @@ export function Board() {
 			roomInfo?.player2Id === socketUserId);
 
 	return (
-		<div className='w-full h-full flex justify-center items-center flex-col p-2 sm:p-4'>
-			<div className='relative w-full max-w-[320px] sm:max-w-[400px] lg:max-w-[450px] h-auto aspect-[400/350]'>
+		<div className='flex h-full w-full flex-col items-center justify-center p-2 sm:p-4'>
+			<div className='relative aspect-[400/350] h-auto w-full max-w-[320px] sm:max-w-[400px] lg:max-w-[450px]'>
 				{/* Board Background */}
-				<div className='absolute bg-gradient-to-b from-slate-600 to-slate-800 rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-slate-700 inset-[-7px]'></div>
+				<div className='absolute inset-[-7px] rounded-xl border-2 border-slate-700 bg-gradient-to-b from-slate-600 to-slate-800 shadow-2xl sm:rounded-2xl sm:border-4'></div>
 
 				{/* Game Board Content  */}
-				<div className='relative z-10 w-full h-full flex'>
+				<div className='relative z-10 flex h-full w-full'>
 					{boardDisks[0].map((_, index) => {
 						const isColumnFull = boardDisks[0][index] !== null;
 						const canClick =
@@ -43,23 +44,23 @@ export function Board() {
 							<div
 								key={index}
 								className={classNames(
-									'flex-1 flex flex-col relative transition-all duration-200',
-									canClick && 'hover:bg-purple-500/20 cursor-pointer group'
+									'relative flex flex-1 flex-col transition-all duration-200',
+									canClick && 'group cursor-pointer hover:bg-purple-500/20',
 								)}
 							>
 								{/* Hover indicator for current player */}
 								{canClick && (
-									<div className='absolute inset-0 bg-gradient-to-b from-transparent via-purple-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-lg'></div>
+									<div className='pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-b from-transparent via-purple-400/20 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100'></div>
 								)}
 
 								{/* Column content */}
-								<div className='relative z-10 w-full h-full flex flex-col'>
+								<div className='relative z-10 flex h-full w-full flex-col'>
 									<BoardCol colId={index} />
 								</div>
 
 								{/* Column full indicator */}
 								{isColumnFull && (
-									<div className='absolute top-0 left-0 right-0 h-1 bg-red-500/70 rounded-t-full'></div>
+									<div className='absolute left-0 right-0 top-0 h-1 rounded-t-full bg-red-500/70'></div>
 								)}
 							</div>
 						);
@@ -67,7 +68,7 @@ export function Board() {
 				</div>
 
 				{/* Board Rim Effect */}
-				<div className='absolute inset-[-7px] rounded-xl sm:rounded-2xl border-2 sm:border-4 border-slate-700/60 pointer-events-none shadow-inner'></div>
+				<div className='pointer-events-none absolute inset-[-7px] rounded-xl border-2 border-slate-700/60 shadow-inner sm:rounded-2xl sm:border-4'></div>
 			</div>
 		</div>
 	);

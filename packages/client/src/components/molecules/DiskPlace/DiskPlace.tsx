@@ -1,7 +1,8 @@
-import { useAtomValue } from 'jotai';
 import { CurrentPlayerType } from '@4dots/shared';
-import { BoardDisksAtom } from '@state/room';
+import { useAtomValue } from 'jotai';
+
 import { Disk } from '@atoms/Disk/Disk';
+import { BoardDisksAtom } from '@state/room';
 
 interface DiskProps {
 	colId: number;
@@ -27,17 +28,17 @@ export function DiskPlace(props: DiskProps) {
 	const isEmpty = player === null;
 
 	return (
-		<div className='flex-1 flex justify-center items-center p-0.5 sm:p-1 relative'>
+		<div className='relative flex flex-1 items-center justify-center p-0.5 sm:p-1'>
 			{/* Connect 4 Hole - Always visible */}
-			<div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-slate-700 border border-slate-800 sm:border-2 shadow-inner'></div>
+			<div className='h-8 w-8 rounded-full border border-slate-800 bg-slate-700 shadow-inner sm:h-10 sm:w-10 sm:border-2 lg:h-12 lg:w-12'></div>
 
 			{/* Disk - Overlays the hole */}
 			{!isEmpty && (
-				<div className='absolute inset-0 flex justify-center items-center'>
+				<div className='absolute inset-0 flex items-center justify-center'>
 					<Disk
 						color={getColor()}
 						hasShadow={true}
-						className='w-7 h-7 sm:w-9 sm:h-9 lg:w-10 lg:h-10'
+						className='h-7 w-7 sm:h-9 sm:w-9 lg:h-10 lg:w-10'
 					/>
 				</div>
 			)}

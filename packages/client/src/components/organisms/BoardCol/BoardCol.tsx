@@ -1,17 +1,19 @@
-import { useAtom, useAtomValue } from 'jotai';
-import type { BoardDisksType } from '@4dots/shared';
 import { CurrentPlayerType } from '@4dots/shared';
+import { useAtom, useAtomValue } from 'jotai';
+
+import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
+import { BOARD_SIZE } from '@constants/BoardSettings';
+import { DiskPlace } from '@molecules/DiskPlace/DiskPlace';
 import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
 	RoomInfoAtom,
 	WinnerAtom,
 } from '@state/room';
-import { BOARD_SIZE } from '@constants/BoardSettings';
-import { DiskPlace } from '@molecules/DiskPlace/DiskPlace';
-import { checkWinner, isBoardFull } from '@utils/helpers';
-import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
 import { SocketUserIdAtom } from '@state/socket';
+import { checkWinner, isBoardFull } from '@utils/helpers';
+
+import type { BoardDisksType } from '@4dots/shared';
 
 interface BoardColProps {
 	colId: number;
@@ -56,7 +58,7 @@ export function BoardCol(props: BoardColProps) {
 					setCurrentPlayer(
 						currentPlayer === CurrentPlayerType.Player1
 							? CurrentPlayerType.Player2
-							: CurrentPlayerType.Player1
+							: CurrentPlayerType.Player1,
 					);
 				}
 
@@ -78,7 +80,7 @@ export function BoardCol(props: BoardColProps) {
 	}
 
 	return (
-		<div className='w-full h-full flex flex-col' onClick={handleClickCol}>
+		<div className='flex h-full w-full flex-col' onClick={handleClickCol}>
 			{boardDisks.map((_, index) => (
 				<DiskPlace key={index} colId={colId} rowId={index} />
 			))}

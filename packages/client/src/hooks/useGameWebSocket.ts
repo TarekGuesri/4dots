@@ -1,9 +1,7 @@
-import { useEffect, useCallback, useRef } from 'react';
-import type { BoardDisksType, IRoomInfo, SocketEventType } from '@4dots/shared';
 import { CurrentPlayerType } from '@4dots/shared';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import type { Sound } from '@app-types';
-import { SocketUserIdAtom } from '@state/socket';
+import { useCallback, useEffect, useRef } from 'react';
+
 import { socket } from '@src/socket';
 import {
 	BoardDisksAtom,
@@ -12,6 +10,10 @@ import {
 	useBoardRematch,
 	WinnerAtom,
 } from '@state/room';
+import { SocketUserIdAtom } from '@state/socket';
+
+import type { BoardDisksType, IRoomInfo, SocketEventType } from '@4dots/shared';
+import type { Sound } from '@app-types';
 
 // Global flag to ensure event listeners are only registered once
 let areEventListenersRegistered = false;
@@ -49,7 +51,7 @@ export function useGameWebSocket(playSound: (sound: Sound) => void) {
 				setRoomInfo({ ...currentRoomInfo, hasGameStarted: true });
 			}
 		},
-		[setRoomInfo]
+		[setRoomInfo],
 	);
 
 	const onBoardUpdated = useCallback(
@@ -108,7 +110,7 @@ export function useGameWebSocket(playSound: (sound: Sound) => void) {
 				}
 			}
 		},
-		[setBoardDisks, setCurrentPlayer, setWinner, playSound]
+		[setBoardDisks, setCurrentPlayer, setWinner, playSound],
 	);
 
 	const onRematchRequested = useCallback(
@@ -116,7 +118,7 @@ export function useGameWebSocket(playSound: (sound: Sound) => void) {
 			console.log('rematch requested', roomInfo);
 			setRoomInfo(roomInfo);
 		},
-		[setRoomInfo]
+		[setRoomInfo],
 	);
 
 	const onRematchAccepted = useCallback(
@@ -125,7 +127,7 @@ export function useGameWebSocket(playSound: (sound: Sound) => void) {
 			setRoomInfo(roomInfo);
 			boardRematch();
 		},
-		[setRoomInfo, boardRematch]
+		[setRoomInfo, boardRematch],
 	);
 
 	const startGame = () => {

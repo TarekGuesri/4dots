@@ -1,15 +1,17 @@
+import { useAtom, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+
+import { socket } from '@src/socket';
+import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
+import { SocketUserIdAtom } from '@state/socket';
+import { ModalTypeAtom } from '@state/ui';
+
 import type {
 	EventErrorsType,
 	IRoomInfo,
 	SocketEventType,
 } from '@4dots/shared';
-import { useAtom, useSetAtom } from 'jotai';
-import { SocketUserIdAtom } from '@state/socket';
-import { socket } from '@src/socket';
-import { ModalTypeAtom } from '@state/ui';
-import { RoomInfoAtom, RoomInfoLoadingAtom } from '@state/room';
 
 export function useRoomWebSocket() {
 	const [roomInfo, setRoomInfo] = useAtom(RoomInfoAtom);

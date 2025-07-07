@@ -1,18 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+import { Help as HelpIcon, PlayArrow as PlayIcon } from '@mui/icons-material';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import {
-	PlayArrow as PlayIcon,
-	Help as HelpIcon,
-	Star as StarIcon,
-} from '@mui/icons-material';
-import { RoomInfoAtom } from '@state/room';
+import { useNavigate } from 'react-router-dom';
+
 import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
+import { Loading } from '@atoms/Loading/Loading';
+import { Button } from '@molecules/Button/Button';
+import { GameStats } from '@molecules/GameStats/GameStats';
+import { RoomInfoAtom } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
 import { ModalTypeAtom } from '@state/ui';
-import { Button } from '@molecules/Button/Button';
-import { Loading } from '@atoms/Loading/Loading';
-import { GameStats } from '@molecules/GameStats/GameStats';
 
 export function Home() {
 	const [IsLoading, setIsLoading] = useState(false);
@@ -44,22 +41,19 @@ export function Home() {
 	}
 
 	return (
-		<div className='min-h-screen flex flex-col items-center justify-center p-4 relative'>
-			<div className='text-center space-y-8 max-w-4xl w-full animate-slide-in'>
+		<div className='relative flex min-h-screen flex-col items-center justify-center p-4'>
+			<div className='animate-slide-in w-full max-w-4xl space-y-8 text-center'>
 				<div className='space-y-6'>
 					<div className='relative'>
-						<h1 className='text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-pulse-glow'>
+						<h1 className='bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-6xl font-bold text-transparent drop-shadow-lg md:text-7xl'>
 							Connect 4
 						</h1>
-						<div className='absolute -top-2 -right-2'>
-							<StarIcon className='text-yellow-400 text-2xl animate-bounce-in' />
-						</div>
 					</div>
 
-					<p className='text-slate-200 text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed'>
+					<p className='mx-auto max-w-2xl text-xl leading-relaxed text-slate-200 md:text-2xl'>
 						Challenge your friends to a classic game of strategy and skill!
 						<br />
-						<span className='text-purple-300 font-medium'>
+						<span className='font-medium text-purple-300'>
 							Can you connect 4 and claim victory?
 						</span>
 					</p>
@@ -71,11 +65,11 @@ export function Home() {
 				</div>
 
 				{/* Action Buttons */}
-				<div className='flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto'>
+				<div className='mx-auto flex max-w-md flex-col items-center justify-center gap-4 sm:flex-row'>
 					<Button
 						disabled={IsLoading}
 						onClick={handleCreateRoom}
-						className='w-full sm:w-auto py-4 px-8 text-lg font-semibold btn-glow animate-bounce-in'
+						className='btn-glow animate-bounce-in w-full px-8 py-4 text-lg font-semibold sm:w-auto'
 						style={{ animationDelay: '0.2s' }}
 					>
 						<PlayIcon className='mr-2' />
@@ -85,7 +79,7 @@ export function Home() {
 					<Button
 						variant='secondary'
 						onClick={handleShowRules}
-						className='w-full sm:w-auto py-4 px-8 text-lg font-semibold btn-glow animate-bounce-in'
+						className='btn-glow animate-bounce-in w-full px-8 py-4 text-lg font-semibold sm:w-auto'
 						style={{ animationDelay: '0.4s' }}
 					>
 						<HelpIcon className='mr-2' />

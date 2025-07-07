@@ -1,11 +1,13 @@
-import type { IRoomInfo, BoardDisksType } from '@4dots/shared';
-import { atom, useAtom, useSetAtom } from 'jotai';
 import { CurrentPlayerType } from '@4dots/shared';
+import { atom, useAtom, useSetAtom } from 'jotai';
+
 import { BOARD_SIZE } from '@constants/BoardSettings';
+
+import type { BoardDisksType, IRoomInfo } from '@4dots/shared';
 
 const createEmptyBoard = () => {
 	return Array.from({ length: BOARD_SIZE.rows }, () =>
-		Array(BOARD_SIZE.columns).fill(null)
+		Array(BOARD_SIZE.columns).fill(null),
 	);
 };
 
@@ -53,7 +55,7 @@ const initialGameStats: GameStats = {
 export const BoardDisksAtom = atom<BoardDisksType>(createEmptyBoard());
 
 export const CurrentPlayerAtom = atom<CurrentPlayerType>(
-	CurrentPlayerType.Player1
+	CurrentPlayerType.Player1,
 );
 
 export const WinnerAtom = atom<CurrentPlayerType | null>(null);
@@ -130,7 +132,7 @@ export function useUpdateGameStats() {
 			newStats.winStreak += 1;
 			newStats.longestWinStreak = Math.max(
 				newStats.longestWinStreak,
-				newStats.winStreak
+				newStats.winStreak,
 			);
 		} else if (result === 'loss') {
 			newStats.losses += 1;

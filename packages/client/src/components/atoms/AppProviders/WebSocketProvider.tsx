@@ -1,12 +1,14 @@
-import { createContext, useContext, useEffect, useState, useRef } from 'react';
-import type { ReactNode } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import type { CurrentPlayerType, BoardDisksType } from '@4dots/shared';
-import { useRoomWebSocket } from '@hooks/useRoomWebSocket';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+
 import { useGameWebSocket } from '@hooks/useGameWebSocket';
+import { useRoomWebSocket } from '@hooks/useRoomWebSocket';
+import { socket } from '@src/socket';
 import { SocketUserIdAtom } from '@state/socket';
 import { SoundAtom } from '@state/ui';
-import { socket } from '@src/socket';
+
+import type { BoardDisksType, CurrentPlayerType } from '@4dots/shared';
+import type { ReactNode } from 'react';
 
 interface WebSocketContextType {
 	createRoom: () => void;
@@ -46,7 +48,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 			'Sound enabled, playing:',
 			sound,
 			'soundEnabled:',
-			soundEnabledRef.current
+			soundEnabledRef.current,
 		);
 		const audio = new Audio(`/sounds/${sound}.mp3`);
 		audio.play();
@@ -112,7 +114,7 @@ export function useWebSocketContext() {
 	const context = useContext(WebSocketContext);
 	if (!context) {
 		throw new Error(
-			'useWebSocketContext must be used within a WebSocketProvider'
+			'useWebSocketContext must be used within a WebSocketProvider',
 		);
 	}
 	return context;

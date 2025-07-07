@@ -62,7 +62,9 @@
 		box-shadow: 0 0 10px currentColor;
 	}
 	50% {
-		box-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+		box-shadow:
+			0 0 20px currentColor,
+			0 0 30px currentColor;
 	}
 }
 

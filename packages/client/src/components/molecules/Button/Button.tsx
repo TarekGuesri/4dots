@@ -1,5 +1,6 @@
-import type { ReactNode, ButtonHTMLAttributes } from 'react';
 import classNames from 'classnames';
+
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: ReactNode;
@@ -32,7 +33,7 @@ export function Button({
 			'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-red-500/50':
 				variant === 'danger' && disabled,
 		},
-		className
+		className,
 	);
 
 	return (

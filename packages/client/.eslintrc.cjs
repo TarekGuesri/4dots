@@ -6,9 +6,9 @@ module.exports = {
 		'plugin:@typescript-eslint/recommended',
 		'plugin:react/recommended',
 		'plugin:react/jsx-runtime',
-		'plugin:prettier/recommended',
 		'plugin:import/recommended',
 		'plugin:import/typescript',
+		'prettier',
 	],
 	parserOptions: {
 		parser: '@typescript-eslint/parser',
@@ -22,9 +22,24 @@ module.exports = {
 		'@typescript-eslint/consistent-type-imports': 'error',
 		'@typescript-eslint/ban-ts-comment': 'off',
 		'import/no-named-as-default': 'off',
-		'prettier/prettier': 'error',
 		'react/jsx-curly-brace-presence': 'error',
-		'import/order': 'error',
+		'import/order': [
+			'error',
+			{
+				groups: [
+					'builtin',
+					'external',
+					'internal',
+					'parent',
+					'sibling',
+					'index',
+					'object',
+					'type',
+				],
+				'newlines-between': 'always',
+				alphabetize: { order: 'asc', caseInsensitive: true },
+			},
+		],
 		'import/newline-after-import': 'error',
 	},
 	settings: {

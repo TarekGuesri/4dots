@@ -32,9 +32,9 @@ export function Disk({
 		<div
 			className={classNames(
 				getDiskStyle(),
-				'rounded-full aspect-square transition-all duration-300',
+				'aspect-square rounded-full transition-all duration-300',
 				isWinner ? 'animate-winner-glow' : '',
-				className
+				className,
 			)}
 			style={{
 				...(width && height
