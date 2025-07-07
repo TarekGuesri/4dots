@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
+import type { CurrentPlayerType, BoardDisksType } from '@4dots/shared';
 import { useRoomWebSocket } from '@hooks/useRoomWebSocket';
 import { useGameWebSocket } from '@hooks/useGameWebSocket';
 import { SocketUserIdAtom } from '@state/socket';
@@ -13,9 +14,9 @@ interface WebSocketContextType {
 	leaveRoom: () => void;
 	startGame: () => void;
 	makeMove: (params: {
-		newBoard: any;
-		currentPlayer: any;
-		winner: any;
+		newBoard: BoardDisksType;
+		currentPlayer: CurrentPlayerType;
+		winner: CurrentPlayerType | null;
 	}) => void;
 	askForRematch: () => void;
 	isConnected: boolean;

@@ -16,20 +16,20 @@ export function Button({
 	...rest
 }: ButtonProps) {
 	const buttonClasses = classNames(
-		'px-4 py-2 font-semibold rounded-lg shadow-md', // Base classes
+		'px-6 py-3 font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95',
 		{
-			'bg-blue-500 text-white hover:bg-blue-600 shadow-blue-500/50':
+			'bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600 shadow-purple-500/50 hover:shadow-purple-500/75':
 				variant === 'primary' && !disabled,
-			'bg-gray-500 text-white hover:bg-gray-600 shadow-gray-500/50':
+			'bg-gradient-to-r from-slate-600 to-slate-700 text-white hover:from-slate-700 hover:to-slate-800 shadow-slate-500/50 hover:shadow-slate-500/75':
 				variant === 'secondary' && !disabled,
-			'bg-red-500 text-white hover:bg-red-600 shadow-red-500/50':
+			'bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 shadow-red-500/50 hover:shadow-red-500/75':
 				variant === 'danger' && !disabled,
-			'opacity-50 cursor-not-allowed': disabled,
-			'bg-blue-500 text-white shadow-blue-500/50':
+			'opacity-50 cursor-not-allowed transform-none hover:scale-100': disabled,
+			'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-purple-500/50':
 				variant === 'primary' && disabled,
-			'bg-gray-500 text-white shadow-gray-500/50':
+			'bg-gradient-to-r from-slate-600 to-slate-700 text-white shadow-slate-500/50':
 				variant === 'secondary' && disabled,
-			'bg-red-500 text-white shadow-red-500/50':
+			'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-red-500/50':
 				variant === 'danger' && disabled,
 		},
 		className

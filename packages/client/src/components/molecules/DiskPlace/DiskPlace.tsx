@@ -21,12 +21,26 @@ export function DiskPlace(props: DiskProps) {
 			return 'bg-yellow-500';
 		}
 
-		return 'bg-neutral-800';
+		return 'bg-transparent';
 	};
 
+	const isEmpty = player === null;
+
 	return (
-		<div className='pointer-events-none flex-1 flex justify-center items-center p-1'>
-			<Disk color={getColor()} hasShadow={true} />
+		<div className='flex-1 flex justify-center items-center p-0.5 sm:p-1 relative'>
+			{/* Connect 4 Hole - Always visible */}
+			<div className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-slate-700 border border-slate-800 sm:border-2 shadow-inner'></div>
+
+			{/* Disk - Overlays the hole */}
+			{!isEmpty && (
+				<div className='absolute inset-0 flex justify-center items-center'>
+					<Disk
+						color={getColor()}
+						hasShadow={true}
+						className='w-7 h-7 sm:w-9 sm:h-9 lg:w-10 lg:h-10'
+					/>
+				</div>
+			)}
 		</div>
 	);
 }

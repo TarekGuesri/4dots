@@ -1,7 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import type { BoardDisksType } from '@4dots/shared';
 import { CurrentPlayerType } from '@4dots/shared';
-import classNames from 'classnames';
 import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
@@ -33,22 +32,12 @@ export function BoardCol(props: BoardColProps) {
 		(currentPlayer === CurrentPlayerType.Player2 &&
 			roomInfo?.player2Id === socketUserId);
 
+	const isColumnFull = boardDisks[0][colId] !== null;
+	const canClick =
+		!winner && !isColumnFull && isCurrentPlayer && roomInfo?.hasGameStarted;
+
 	const handleClickCol = () => {
-		if (winner || boardDisks[0][colId]) return;
-
-		if (
-			currentPlayer === CurrentPlayerType.Player1 &&
-			roomInfo?.player1Id !== socketUserId
-		) {
-			return;
-		}
-
-		if (
-			currentPlayer === CurrentPlayerType.Player2 &&
-			roomInfo?.player2Id !== socketUserId
-		) {
-			return;
-		}
+		if (!canClick) return;
 
 		const newBoard: BoardDisksType = boardDisks.map((row) => [...row]);
 		let socketWinner = null;
@@ -89,15 +78,7 @@ export function BoardCol(props: BoardColProps) {
 	}
 
 	return (
-		<div
-			className={classNames(
-				'flex-1 flex flex-col',
-				isCurrentPlayer && !winner && !isBoardFull(boardDisks)
-					? 'hover:bg-neutral-600 cursor-pointer'
-					: ''
-			)}
-			onClick={handleClickCol}
-		>
+		<div className='w-full h-full flex flex-col' onClick={handleClickCol}>
 			{boardDisks.map((_, index) => (
 				<DiskPlace key={index} colId={colId} rowId={index} />
 			))}
