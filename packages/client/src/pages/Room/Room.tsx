@@ -14,6 +14,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
 import { Disk } from '@atoms/Disk/Disk';
+import { usePlaySound } from '@hooks/usePlaySound';
 import { Button } from '@molecules/Button/Button';
 import { PlayerIndicator } from '@molecules/PlayerIndicator/PlayerIndicator';
 import { RoomPlayerIndicators } from '@organisms/RoomPlayerIndicators/RoomPlayerIndicators';
@@ -49,7 +50,8 @@ export function Room() {
 	const [gameTime, setGameTime] = useAtom(GameTimeAtom);
 	const resetRoomState = useResetRoomState();
 	const updateGameStats = useUpdateGameStats();
-	const { joinRoom, leaveRoom, startGame, askForRematch } =
+	const { playSound, stopAllSounds } = usePlaySound();
+	const { joinRoom, leaveRoom, startGame, askForRematch, makeMove } =
 		useWebSocketContext();
 	const isLeaving = useRef(false);
 	const params = useParams();
@@ -70,20 +72,72 @@ export function Room() {
 
 	// Game timer effect
 	useEffect(() => {
+		if (roomInfo?.hasGameStarted) {
+			setGameTime(60);
+		}
+	}, [roomInfo?.hasGameStarted]);
+
+	useEffect(() => {
 		let interval: NodeJS.Timeout;
-		if (roomInfo?.hasGameStarted && !winner && !isBoardFull(boardDisks)) {
+
+		const isYourTurn =
+			(currentPlayer === CurrentPlayerType.Player1 &&
+				socketUserId === roomInfo?.player1Id) ||
+			(currentPlayer === CurrentPlayerType.Player2 &&
+				socketUserId === roomInfo?.player2Id);
+
+		if (
+			roomInfo?.hasGameStarted &&
+			!winner &&
+			!isBoardFull(boardDisks) &&
+			isYourTurn
+		) {
 			interval = setInterval(() => {
-				setGameTime((prev) => prev + 1);
+				setGameTime((prev) => {
+					if (prev > 0) {
+						if (prev <= 10) {
+							playSound('clock_ticking');
+						}
+						return prev - 1;
+					} else {
+						clearInterval(interval);
+
+						// Stop all sounds when time runs out
+						stopAllSounds();
+
+						const winningPlayer =
+							currentPlayer === CurrentPlayerType.Player1
+								? CurrentPlayerType.Player2
+								: CurrentPlayerType.Player1;
+
+						playSound('game_lost');
+						makeMove({
+							newBoard: boardDisks,
+							currentPlayer: winningPlayer,
+							winner: winningPlayer,
+						});
+
+						return 0;
+					}
+				});
 			}, 1000);
 		}
-		return () => clearInterval(interval);
-	}, [roomInfo?.hasGameStarted, winner, boardDisks]);
 
-	// Update game stats when game ends
+		return () => clearInterval(interval);
+	}, [
+		roomInfo?.hasGameStarted,
+		winner,
+		boardDisks,
+		currentPlayer,
+		socketUserId,
+		roomInfo,
+		playSound,
+		makeMove,
+	]);
+
 	useEffect(() => {
 		if (winner || isBoardFull(boardDisks)) {
 			if (winner) {
-				// Determine if current player won
 				const isCurrentPlayerWinner =
 					(winner === CurrentPlayerType.Player1 &&
 						socketUserId === roomInfo?.player1Id) ||
@@ -305,8 +359,17 @@ export function Room() {
 										<div className='flex flex-1 flex-col items-center'>
 											<div className='glass flex min-w-[60px] flex-col items-center justify-center rounded-lg p-2 text-center'>
 												<TimerIcon className='mb-1 text-base text-purple-400' />
-												<div className='text-base font-bold text-slate-200'>
-													{formatTime(gameTime)}
+												<div className='relative w-[60px] text-center sm:w-[80px] lg:w-[100px]'>
+													<span
+														className={classNames(
+															'inline-block text-lg font-bold transition-transform duration-300 sm:text-xl lg:text-2xl',
+															gameTime <= 10
+																? 'scale-125 animate-pulse text-red-500'
+																: 'text-slate-200',
+														)}
+													>
+														{formatTime(gameTime)}
+													</span>
 												</div>
 												<div className='mt-1 flex flex-row justify-center gap-1'>
 													<button
@@ -367,8 +430,17 @@ export function Room() {
 									<div className='glass rounded-lg p-3 text-center sm:rounded-xl sm:p-4'>
 										<div className='mb-1 flex items-center justify-center gap-1 sm:mb-2 sm:gap-2'>
 											<TimerIcon className='text-sm text-purple-400 sm:text-base' />
-											<div className='text-lg font-bold text-slate-200 sm:text-xl lg:text-2xl'>
-												{formatTime(gameTime)}
+											<div className='relative w-[60px] text-center sm:w-[80px] lg:w-[100px]'>
+												<span
+													className={classNames(
+														'inline-block text-lg font-bold transition-transform duration-300 sm:text-xl lg:text-2xl',
+														gameTime <= 10
+															? 'scale-125 animate-pulse text-red-500'
+															: 'text-slate-200',
+													)}
+												>
+													{formatTime(gameTime)}
+												</span>
 											</div>
 										</div>
 										<div className='flex flex-row justify-center gap-2 sm:gap-3'>

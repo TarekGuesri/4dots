@@ -66,7 +66,7 @@ export const RoomInfoLoadingAtom = atom<boolean>();
 
 export const GameStatsAtom = atom<GameStats>(initialGameStats);
 
-export const GameTimeAtom = atom<number>(0);
+export const GameTimeAtom = atom<number>(60);
 
 export function useResetBoardState() {
 	const setBoardDisks = useSetAtom(BoardDisksAtom);
@@ -109,7 +109,7 @@ export function useBoardRematch() {
 		setBoardDisks(createEmptyBoard());
 		setCurrentPlayer(CurrentPlayerType.Player1);
 		setWinner(null);
-		setGameTime(0);
+		setGameTime(60); // Reset timer to 60 seconds for new game
 		if (roomInfo) {
 			setRoomInfo({
 				...roomInfo,
