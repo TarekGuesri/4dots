@@ -2,6 +2,7 @@ import { CurrentPlayerType } from '@4dots/shared';
 import { atom, useAtom, useSetAtom } from 'jotai';
 
 import { BOARD_SIZE } from '@constants/BoardSettings';
+import { GAME_SETTINGS } from '@constants/GameSettings';
 
 import type { BoardDisksType, IRoomInfo } from '@4dots/shared';
 
@@ -66,7 +67,7 @@ export const RoomInfoLoadingAtom = atom<boolean>();
 
 export const GameStatsAtom = atom<GameStats>(initialGameStats);
 
-export const GameTimeAtom = atom<number>(60);
+export const GameTimeAtom = atom<number>(GAME_SETTINGS.TURN_TIME_LIMIT_SECONDS);
 
 export function useResetBoardState() {
 	const setBoardDisks = useSetAtom(BoardDisksAtom);
@@ -109,7 +110,7 @@ export function useBoardRematch() {
 		setBoardDisks(createEmptyBoard());
 		setCurrentPlayer(CurrentPlayerType.Player1);
 		setWinner(null);
-		setGameTime(60); // Reset timer to 60 seconds for new game
+		setGameTime(GAME_SETTINGS.TURN_TIME_LIMIT_SECONDS); // Reset timer for new game
 		if (roomInfo) {
 			setRoomInfo({
 				...roomInfo,
