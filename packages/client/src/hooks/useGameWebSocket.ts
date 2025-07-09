@@ -2,10 +2,12 @@ import { CurrentPlayerType } from '@4dots/shared';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
 
+import { GAME_SETTINGS } from '@constants/GameSettings';
 import { socket } from '@src/socket';
 import {
 	BoardDisksAtom,
 	CurrentPlayerAtom,
+	GameTimeAtom,
 	RoomInfoAtom,
 	useBoardRematch,
 	WinnerAtom,
@@ -24,6 +26,7 @@ export function useGameWebSocket(playSound: (sound: Sound) => void) {
 	const setBoardDisks = useSetAtom(BoardDisksAtom);
 	const setCurrentPlayer = useSetAtom(CurrentPlayerAtom);
 	const setWinner = useSetAtom(WinnerAtom);
+	const setGameTime = useSetAtom(GameTimeAtom);
 	const boardRematch = useBoardRematch();
 
 	// Use refs to store latest values for event handlers
@@ -100,6 +103,8 @@ export function useGameWebSocket(playSound: (sound: Sound) => void) {
 			}
 			// If game is still ongoing
 			else {
+				setGameTime(GAME_SETTINGS.TURN_TIME_LIMIT_SECONDS);
+
 				// If it's now the current player's turn, it means the opponent just moved
 				if (currentPlayer === userPlayerType) {
 					console.log('opponent move');
@@ -110,7 +115,7 @@ export function useGameWebSocket(playSound: (sound: Sound) => void) {
 				}
 			}
 		},
-		[setBoardDisks, setCurrentPlayer, setWinner, playSound],
+		[setBoardDisks, setCurrentPlayer, setWinner, setGameTime, playSound],
 	);
 
 	const onRematchRequested = useCallback(
