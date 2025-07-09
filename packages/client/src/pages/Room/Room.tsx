@@ -14,6 +14,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
 import { Disk } from '@atoms/Disk/Disk';
+import { GAME_SETTINGS } from '@constants/GameSettings';
 import { usePlaySound } from '@hooks/usePlaySound';
 import { Button } from '@molecules/Button/Button';
 import { PlayerIndicator } from '@molecules/PlayerIndicator/PlayerIndicator';
@@ -73,7 +74,7 @@ export function Room() {
 	// Game timer effect
 	useEffect(() => {
 		if (roomInfo?.hasGameStarted) {
-			setGameTime(60);
+			setGameTime(GAME_SETTINGS.TURN_TIME_LIMIT_SECONDS);
 		}
 	}, [roomInfo?.hasGameStarted]);
 
@@ -171,6 +172,9 @@ export function Room() {
 	};
 
 	const toggleSound = () => {
+		if (soundEnabled) {
+			stopAllSounds();
+		}
 		setSoundEnabled((prev) => !prev);
 	};
 
@@ -357,9 +361,9 @@ export function Room() {
 										</div>
 										{/* Timer/Settings */}
 										<div className='flex flex-1 flex-col items-center'>
-											<div className='glass flex min-w-[60px] flex-col items-center justify-center rounded-lg p-2 text-center'>
+											<div className='glass flex flex-col items-center justify-center rounded-lg p-2 text-center'>
 												<TimerIcon className='mb-1 text-base text-purple-400' />
-												<div className='relative w-[60px] text-center sm:w-[80px] lg:w-[100px]'>
+												<div className='relative w-12 text-center sm:w-14 lg:w-16'>
 													<span
 														className={classNames(
 															'inline-block text-lg font-bold transition-transform duration-300 sm:text-xl lg:text-2xl',
@@ -426,11 +430,11 @@ export function Room() {
 									currentPlayer={currentPlayer}
 								/>
 								{/* Timer/Settings */}
-								<div className='flex min-w-[60px] flex-col items-center justify-center gap-2 sm:min-w-[80px] sm:gap-3 lg:min-w-[100px]'>
+								<div className='flex flex-col items-center justify-center gap-2 sm:gap-3'>
 									<div className='glass rounded-lg p-3 text-center sm:rounded-xl sm:p-4'>
 										<div className='mb-1 flex items-center justify-center gap-1 sm:mb-2 sm:gap-2'>
 											<TimerIcon className='text-sm text-purple-400 sm:text-base' />
-											<div className='relative w-[60px] text-center sm:w-[80px] lg:w-[100px]'>
+											<div className='relative w-12 text-center sm:w-14 lg:w-16'>
 												<span
 													className={classNames(
 														'inline-block text-lg font-bold transition-transform duration-300 sm:text-xl lg:text-2xl',
