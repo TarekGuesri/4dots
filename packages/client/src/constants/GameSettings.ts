@@ -1,3 +1,3 @@
 export const GAME_SETTINGS = {
-	TURN_TIME_LIMIT_SECONDS: 60,
+	TURN_TIME_LIMIT_SECONDS: 13,
 } as const;

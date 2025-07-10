@@ -111,7 +111,6 @@ export function Room() {
 								? CurrentPlayerType.Player2
 								: CurrentPlayerType.Player1;
 
-						playSound('game_lost');
 						makeMove({
 							newBoard: boardDisks,
 							currentPlayer: winningPlayer,
