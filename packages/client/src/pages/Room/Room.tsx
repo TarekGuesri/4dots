@@ -3,13 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
+import { RoomModal } from '@molecules/Room/RoomModal';
 import {
 	RoomInfoAtom,
 	RoomInfoLoadingAtom,
 	useResetRoomState,
 } from '@state/room';
 import { ModalTypeAtom } from '@state/ui';
-import { RoomModal } from '@templates/RoomTemp/RoomModal';
 import { RoomTemp } from '@templates/RoomTemp/RoomTemp';
 
 export function Room() {

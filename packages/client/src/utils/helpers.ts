@@ -67,3 +67,9 @@ export const isBoardFull = (board: BoardDisksType): boolean => {
 		row.every((cell: CurrentPlayerType | null) => cell !== null),
 	);
 };
+
+export const formatTime = (seconds: number) => {
+	const mins = Math.floor(seconds / 60);
+	const secs = seconds % 60;
+	return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
