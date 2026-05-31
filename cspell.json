@@ -31,6 +31,9 @@
 		"Socket",
 		"websockets",
 		"jotai",
-		"Gameplay"
+		"Gameplay",
+		"yourdomain",
+		"nodevenv",
+		"proxying"
 	]
 }

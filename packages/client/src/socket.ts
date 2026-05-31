@@ -1,15 +1,12 @@
 import { io } from 'socket.io-client';
 
-// "undefined" means the URL will be computed from the `window.location` object
-const URL =
-	process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:3000';
+import { getSocketUrl } from '@src/config/env';
 
-console.log(
-	'Initializing socket connection to:',
-	URL ?? 'http://localhost:3000',
-);
+const socketUrl = getSocketUrl();
 
-export const socket = io(URL ?? '', {
+console.log('Initializing socket connection to:', socketUrl);
+
+export const socket = io(socketUrl, {
 	// Reconnection settings
 	reconnection: true,
 	reconnectionAttempts: 5,

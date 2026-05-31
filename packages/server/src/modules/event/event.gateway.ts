@@ -13,11 +13,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { getSocketCorsOrigin } from '../../config/cors';
 import { EventService } from './event.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: getSocketCorsOrigin(),
   },
 })
 export class EventGateway {

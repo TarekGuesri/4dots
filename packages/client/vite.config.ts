@@ -6,7 +6,7 @@ import tsConfig from './tsconfig.paths.json';
 const tsPaths = tsConfig.compilerOptions.paths;
 const ROOT = __dirname;
 
-const alias = Object.keys(tsPaths).reduce(
+const alias: Record<string, string> = Object.keys(tsPaths).reduce(
 	(pathMap, key) => ({
 		...pathMap,
 		[key.replace(/\*$/, '')]: join(

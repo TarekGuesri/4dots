@@ -14,6 +14,8 @@
 		"start:dev": "concurrently \"yarn server start:dev\" \"yarn client start:dev\" -i --names \"server,client\"",
 		"format": "prettier --write .",
 		"lint": "concurrently \"yarn server lint\" \"yarn client lint\"",
+		"build:client": "yarn workspace @4dots/client build",
+		"build:server": "yarn workspace @4dots/server build",
 		"postinstall": "yarn husky install"
 	},
 	"devDependencies": {
