@@ -62,15 +62,17 @@ The client uses `http://localhost:3000` in dev when `VITE_API_URL` is unset.
 
 1. Push the repository to GitHub (or GitLab/Bitbucket).
 2. In [Vercel](https://vercel.com), **Add New Project** and import the repo.
-3. Use these settings (also defined in root `vercel.json`):
+3. Set **Root Directory** to `packages/client` (Edit → Root Directory). This is required for the monorepo; settings are in `packages/client/vercel.json`.
 
-   | Setting          | Value                                |
-   | ---------------- | ------------------------------------ |
-   | Framework Preset | Vite                                 |
-   | Root Directory   | _(leave as repository root)_         |
-   | Install Command  | `yarn install`                       |
-   | Build Command    | `yarn workspace @4dots/client build` |
-   | Output Directory | `packages/client/dist`               |
+   | Setting          | Value                                           |
+   | ---------------- | ----------------------------------------------- |
+   | Framework Preset | Vite                                            |
+   | Root Directory   | `packages/client`                               |
+   | Install Command  | `cd ../.. && yarn install` _(from vercel.json)_ |
+   | Build Command    | `yarn build` _(from vercel.json)_               |
+   | Output Directory | `dist` _(from vercel.json)_                     |
+
+   In the Vercel dashboard, leave **Output Directory** empty or set to `dist` so it matches `vercel.json`. Do **not** use `packages/client/dist` when Root Directory is already `packages/client` — that path is only for deploying from the repository root (see root `vercel.json`).
 
 4. Under **Environment Variables**, add:
 
