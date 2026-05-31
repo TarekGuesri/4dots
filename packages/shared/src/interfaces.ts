@@ -19,6 +19,31 @@ export interface SocketEventErrorPayload {
 	type: EventErrorsType;
 }
 
+export interface IGameStats {
+	totalGames: number;
+	wins: number;
+	losses: number;
+	draws: number;
+	winStreak: number;
+	longestWinStreak: number;
+}
+
+export type GameResultType = 'win' | 'loss' | 'draw';
+
+export interface LoadGameStatsPayload {
+	token: string | null;
+}
+
+export interface RecordGameResultPayload {
+	token: string | null;
+	result: GameResultType;
+}
+
+export interface GameStatsSyncPayload {
+	stats: IGameStats;
+	token: string;
+}
+
 export enum CurrentPlayerType {
 	Player1 = 'Player1',
 	Player2 = 'Player2',

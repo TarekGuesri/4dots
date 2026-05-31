@@ -1,19 +1,25 @@
 import type {
+  GameStatsSyncPayload,
   IRoomInfo,
   SocketEventErrorPayload,
   SocketEventType,
 } from '@4dots/shared';
 import { Injectable } from '@nestjs/common';
+import { GameStatsService } from '../game-stats/game-stats.service';
 import type {
   AskForRematchDTO,
   ClearUserFromRoomDTO,
   CreateRoomDTO,
   JoinLeaveStartRoomDTO,
+  LoadGameStatsDTO,
   MakeMoveDTO,
+  RecordGameResultDTO,
 } from './event.dto';
 
 @Injectable()
 export class EventService {
+  constructor(private readonly gameStatsService: GameStatsService) {}
+
   private rooms: Array<IRoomInfo> = [];
 
   createRoom({ room, server: _server, socket }: CreateRoomDTO) {
@@ -181,5 +187,26 @@ export class EventService {
       // Only one player wants to rematch, notify the other
       server.to(recipientId).emit<SocketEventType>('rematchRequested', room);
     }
+  }
+
+  // Decrypts the client's token (if any) and returns the stats together with a
+  // freshly encrypted token to persist.
+  loadGameStats({ socket, token }: LoadGameStatsDTO) {
+    const stats = this.gameStatsService.load(token);
+    socket.emit<SocketEventType>('gameStatsSynced', {
+      stats,
+      token: this.gameStatsService.encrypt(stats),
+    } as GameStatsSyncPayload);
+  }
+
+  // Applies a finished game's result authoritatively, then returns the updated
+  // stats and a new token. The client never mutates the persisted numbers.
+  recordGameResult({ socket, token, result }: RecordGameResultDTO) {
+    const current = this.gameStatsService.load(token);
+    const stats = this.gameStatsService.applyResult(current, result);
+    socket.emit<SocketEventType>('gameStatsSynced', {
+      stats,
+      token: this.gameStatsService.encrypt(stats),
+    } as GameStatsSyncPayload);
   }
 }

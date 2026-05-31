@@ -7,12 +7,7 @@ import { useWebSocketContext } from '@atoms/AppProviders/WebSocketProvider';
 import { usePlaySound } from '@hooks/usePlaySound';
 import { Button } from '@molecules/Button/Button';
 import { WaitingLobby } from '@organisms/Room/WaitingLobby';
-import {
-	BoardDisksAtom,
-	CurrentPlayerAtom,
-	useUpdateGameStats,
-	WinnerAtom,
-} from '@state/room';
+import { BoardDisksAtom, CurrentPlayerAtom, WinnerAtom } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
 import { isBoardFull } from '@utils/helpers';
 
@@ -32,9 +27,8 @@ export function RoomTemp(props: RoomTempProps) {
 	const winner = useAtomValue(WinnerAtom);
 	const boardDisks = useAtomValue(BoardDisksAtom);
 
-	const updateGameStats = useUpdateGameStats();
 	const { stopSound } = usePlaySound();
-	const { startGame, askForRematch } = useWebSocketContext();
+	const { startGame, askForRematch, recordGameResult } = useWebSocketContext();
 
 	const isStartGameVisible =
 		roomInfo && socketUserId === roomInfo.hostId && !roomInfo.hasGameStarted;
@@ -76,24 +70,36 @@ export function RoomTemp(props: RoomTempProps) {
 		}
 	}, [roomInfo, stopSound]);
 
+	// Ensures each finished game is reported to the server exactly once, even
+	// though this effect re-runs as board/room state keeps changing.
+	const hasReportedResultRef = useRef(false);
 	useEffect(() => {
-		if (winner || isBoardFull(boardDisks)) {
-			// Stop clock_ticking sound when game ends
-			stopSound('clock_ticking');
+		const isGameOver = Boolean(winner) || isBoardFull(boardDisks);
 
-			if (winner) {
-				const isCurrentPlayerWinner =
-					(winner === CurrentPlayerType.Player1 &&
-						socketUserId === roomInfo?.player1Id) ||
-					(winner === CurrentPlayerType.Player2 &&
-						socketUserId === roomInfo?.player2Id);
-
-				updateGameStats(isCurrentPlayerWinner ? 'win' : 'loss');
-			} else {
-				updateGameStats('draw');
-			}
+		// Reset the guard once a fresh game is in progress (e.g. after a rematch).
+		if (!isGameOver) {
+			hasReportedResultRef.current = false;
+			return;
 		}
-	}, [winner, boardDisks, socketUserId, roomInfo, stopSound]);
+
+		if (hasReportedResultRef.current) return;
+		hasReportedResultRef.current = true;
+
+		// Stop clock_ticking sound when game ends
+		stopSound('clock_ticking');
+
+		if (winner) {
+			const isCurrentPlayerWinner =
+				(winner === CurrentPlayerType.Player1 &&
+					socketUserId === roomInfo?.player1Id) ||
+				(winner === CurrentPlayerType.Player2 &&
+					socketUserId === roomInfo?.player2Id);
+
+			recordGameResult(isCurrentPlayerWinner ? 'win' : 'loss');
+		} else {
+			recordGameResult('draw');
+		}
+	}, [winner, boardDisks, socketUserId, roomInfo, stopSound, recordGameResult]);
 
 	return (
 		<div className='glass animate-slide-in container mx-auto flex w-full max-w-4xl flex-col items-center justify-center gap-4 rounded-2xl p-3 shadow-2xl sm:gap-6 sm:rounded-3xl sm:p-6 lg:gap-8 lg:p-8'>
@@ -123,7 +129,7 @@ export function RoomTemp(props: RoomTempProps) {
 						disabled={!roomInfo.visitorId}
 						className='w-full sm:max-w-[200px]'
 					>
-						🎮 Start Game
+						<span className='mr-2'>🎮</span> Start
 					</Button>
 				)}
 				{isRestartGameVisible && (
@@ -140,8 +146,8 @@ export function RoomTemp(props: RoomTempProps) {
 					>
 						{(roomInfo.player1Id === socketUserId &&
 							roomInfo.isPlayer1Rematching) ||
-						(roomInfo.player2Id === socketUserId &&
-							roomInfo.isPlayer2Rematching)
+							(roomInfo.player2Id === socketUserId &&
+								roomInfo.isPlayer2Rematching)
 							? '⏳ Waiting...'
 							: '🔄 Play Again'}
 					</Button>

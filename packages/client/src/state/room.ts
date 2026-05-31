@@ -4,7 +4,7 @@ import { atom, useAtom, useSetAtom } from 'jotai';
 import { BOARD_SIZE } from '@constants/BoardSettings';
 import { GAME_SETTINGS } from '@constants/GameSettings';
 
-import type { BoardDisksType, IRoomInfo } from '@4dots/shared';
+import type { BoardDisksType, IGameStats, IRoomInfo } from '@4dots/shared';
 
 const createEmptyBoard = () => {
 	return Array.from({ length: BOARD_SIZE.rows }, () =>
@@ -12,17 +12,7 @@ const createEmptyBoard = () => {
 	);
 };
 
-// Game Statistics Interface
-interface GameStats {
-	totalGames: number;
-	wins: number;
-	losses: number;
-	draws: number;
-	winStreak: number;
-	longestWinStreak: number;
-}
-
-const initialGameStats: GameStats = {
+const initialGameStats: IGameStats = {
 	totalGames: 0,
 	wins: 0,
 	losses: 0,
@@ -65,7 +55,7 @@ export const RoomInfoAtom = atom<IRoomInfo | null>(null);
 
 export const RoomInfoLoadingAtom = atom<boolean>();
 
-export const GameStatsAtom = atom<GameStats>(initialGameStats);
+export const GameStatsAtom = atom<IGameStats>(initialGameStats);
 
 export const GameTimeAtom = atom<number>(GAME_SETTINGS.TURN_TIME_LIMIT_SECONDS);
 
@@ -118,31 +108,5 @@ export function useBoardRematch() {
 				isPlayer2Rematching: false,
 			});
 		}
-	};
-}
-
-export function useUpdateGameStats() {
-	const [gameStats, setGameStats] = useAtom(GameStatsAtom);
-
-	return (result: 'win' | 'loss' | 'draw') => {
-		const newStats = { ...gameStats };
-		newStats.totalGames += 1;
-
-		if (result === 'win') {
-			newStats.wins += 1;
-			newStats.winStreak += 1;
-			newStats.longestWinStreak = Math.max(
-				newStats.longestWinStreak,
-				newStats.winStreak,
-			);
-		} else if (result === 'loss') {
-			newStats.losses += 1;
-			newStats.winStreak = 0;
-		} else {
-			newStats.draws += 1;
-			newStats.winStreak = 0;
-		}
-
-		setGameStats(newStats);
 	};
 }

@@ -21,7 +21,11 @@ export type SocketEventType =
 	| 'makeMove'
 	| 'askForRematch'
 	| 'rematchRequested'
-	| 'rematchAccepted';
+	| 'rematchAccepted'
+	// Game stats
+	| 'loadGameStats'
+	| 'recordGameResult'
+	| 'gameStatsSynced';
 
 export type EventErrorsType =
 	| 'Error.RoomNotFound'

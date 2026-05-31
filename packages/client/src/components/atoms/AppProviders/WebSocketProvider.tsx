@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
+import { useGameStatsSync } from '@hooks/useGameStatsSync';
 import { useGameWebSocket } from '@hooks/useGameWebSocket';
 import { useRoomWebSocket } from '@hooks/useRoomWebSocket';
 import { socket } from '@src/socket';
@@ -8,7 +9,11 @@ import { RoomInfoAtom } from '@state/room';
 import { SocketUserIdAtom } from '@state/socket';
 import { SoundAtom } from '@state/ui';
 
-import type { BoardDisksType, CurrentPlayerType } from '@4dots/shared';
+import type {
+	BoardDisksType,
+	CurrentPlayerType,
+	GameResultType,
+} from '@4dots/shared';
 import type { ReactNode } from 'react';
 
 interface WebSocketContextType {
@@ -22,6 +27,7 @@ interface WebSocketContextType {
 		winner: CurrentPlayerType | null;
 	}) => void;
 	askForRematch: () => void;
+	recordGameResult: (result: GameResultType) => void;
 	isConnected: boolean;
 	isConnecting: boolean;
 	reconnectAttempts: number;
@@ -66,6 +72,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 	};
 
 	const { startGame, makeMove, askForRematch } = useGameWebSocket(playSound);
+	const { recordGameResult } = useGameStatsSync();
 
 	const onConnect = () => {
 		console.log('WebSocket connected, socket ID:', socket.id);
@@ -189,6 +196,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 		startGame,
 		makeMove,
 		askForRematch,
+		recordGameResult,
 		isConnected,
 		isConnecting,
 		reconnectAttempts,

@@ -1,6 +1,7 @@
 import type {
   BoardDisksType,
   CurrentPlayerType,
+  GameResultType,
   SocketEventType,
 } from '@4dots/shared';
 import { IRoomInfo } from '@4dots/shared';
@@ -84,6 +85,26 @@ export class EventGateway {
     @ConnectedSocket() socket: Socket,
   ): Promise<void> {
     this.eventService.askForRematch({ roomId, socket, server: this.server });
+  }
+
+  @SubscribeMessage<SocketEventType>('loadGameStats')
+  async loadGameStats(
+    @MessageBody() body: { token: string | null },
+    @ConnectedSocket() socket: Socket,
+  ): Promise<void> {
+    this.eventService.loadGameStats({ socket, token: body?.token ?? null });
+  }
+
+  @SubscribeMessage<SocketEventType>('recordGameResult')
+  async recordGameResult(
+    @MessageBody() body: { token: string | null; result: GameResultType },
+    @ConnectedSocket() socket: Socket,
+  ): Promise<void> {
+    this.eventService.recordGameResult({
+      socket,
+      token: body?.token ?? null,
+      result: body.result,
+    });
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
